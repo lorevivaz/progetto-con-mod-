@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
-import { fetchMenuDetails, fetchImage } from '../model/HomeViewModel';
+import { fetchMenuDetails, fetchImage } from '../../viewmodel/HomeViewModel';
 
 export default function MenuDetails({ route }) {
 
