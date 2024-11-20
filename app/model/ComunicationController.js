@@ -92,14 +92,14 @@ class CommunicationController {
 
     }
 
-    static async getMenuDetails(sid, mid, lat, lng) {
+    static async getMenuDetails(sid, mid ) {
         let endpoint = "menu/" + mid;
         let verb = 'GET';
     
         let queryParams = {
             sid: sid, 
-            lat: lat,  // Latitudine predefinita
-            lng: lng,     // Longitudine predefinita
+            lat: this.lat,  // Latitudine predefinita
+            lng: this.lng,     // Longitudine predefinita
         };
         let bodyParams = {};
         

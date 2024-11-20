@@ -22,6 +22,7 @@ export async function fetchImage(sid, mid) {
 
 // Funzione per recuperare i dettagli di un menu
 export async function fetchMenuDetails(sid, mid, lat, lng) {
+   
     try {
         const menuDetails = await CommunicationController.getMenuDetails(sid, mid, lat, lng);
         return menuDetails;

@@ -46,7 +46,7 @@ export default function Home({ navigation }) {
     const renderItem = ({ item }) => (
         <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('MenuDetails', { menu: { sid : sid, mid: item.mid, location: item.location, deliveryTime: item.deliveryTime } })}
+            onPress={() => navigation.navigate('MenuDetails', { menu: { sid : sid, mid: item.mid, location: item.location  } })}
         >
             {item.imageUri && <Image source={{ uri: item.imageUri }} style={styles.menuImage} />}
             <View style={styles.cardContent}>

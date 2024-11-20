@@ -58,7 +58,7 @@ export default function MenuDetails({ route }) {
             <View style={styles.infoContainer}>
                 <Text style={styles.menuPrice}>Price: {menuDetails.price}€</Text>
 
-                <Text style={styles.menuDelivery}>Delivery Time: {menuDetails.deliveryTime ? Math.round(menuDetails.deliveryTime / 60) : menu.deliveryTime} min</Text>
+                <Text style={styles.menuDelivery}> Delivery Time: {menuDetails.deliveryTime} min</Text>
                 <Text style={styles.menuLocation}>
                     Location: Lat {menuDetails.location.lat}, Lng {menuDetails.location.lng}
                 </Text>
