@@ -2,8 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { fetchMenu, fetchImage } from '../api/HomeViewModel';
+
+
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { fetchMenu, fetchImage } from "../viewmodel/HomeViewModel";
 
 export default function Home({ navigation }) {
     const [menuData, setMenuData] = useState([]);
@@ -13,11 +17,13 @@ export default function Home({ navigation }) {
 
     useEffect(() => {
         AsyncStorage.getItem('user').then((user) => {
-            const parsedUser = JSON.parse(user);
-            const sid = parsedUser.sid;
-            const uid = parsedUser.uid;
-            setSid(sid);
-            setUid(uid);
+            if (user) {
+                const parsedUser = JSON.parse(user);
+                const sid = parsedUser.sid;
+                const uid = parsedUser.uid;
+                setSid(sid);
+                setUid(uid);
+            }
         });
     }, []);
     

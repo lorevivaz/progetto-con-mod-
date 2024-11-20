@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Navigation from './app/navigation/Navigation';
-import CommunicationController from './app/api/ComunicationController';
+import Navigation from './navigation/Navigation';
+import CommunicationController from './model/ComunicationController';
 import { StyleSheet, Image, View } from 'react-native';
 
 
@@ -50,7 +50,7 @@ export default function App() {
     <>
     {loading ? (
       <View style={styles.container}>
-        <Image source={require('./app/assets/cut-loop.gif')} style={styles.logo}/>
+      <Image source={require('./load-icon/cut-loop.gif')} style={styles.logo} />
       </View>
     ) : (
       user && <Navigation />

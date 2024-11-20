@@ -1,3 +1,6 @@
+
+// ComunicationController.js 
+
 class CommunicationController {
     
     static BASE_URL = "https://develop.ewlab.di.unimi.it/mc/2425/";

@@ -1,10 +1,10 @@
 import { View, TouchableOpacity, Text, TextInput, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import styles from '../style/styles.js';
+import styles from '../style/styles';
 import ProfileForm from './ProfileForm';
 
-import { fetchData, updateUserData } from '../api/ProfileViewModel.js';
+import { fetchData, updateUserData } from '../viewmodel/ProfileViewModel';
 
 export default function ProfileScreen() {
     const [sid, setSid] = useState(null);

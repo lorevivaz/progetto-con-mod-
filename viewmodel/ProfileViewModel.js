@@ -1,4 +1,4 @@
-import CommunicationController from "../app/model/ComunicationController.js";
+import CommunicationController from "../model/ComunicationController";
 
 
 

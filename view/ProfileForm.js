@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, TextInput, View, Button, ScrollView } from 'react-native';
 
-import styles from '../style/styles.js';
+import styles from '../style/styles';
 
 export default function ProfileForm({ user, onInputChange, onSave }) {
     return (

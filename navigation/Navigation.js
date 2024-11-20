@@ -5,10 +5,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import Details from '../ui/Details';
-import Home from '../ui/Home';
-import Profile from '../ui/Profile';
-import MenuDetails from '../ui/MenuDetails';
+import Details from "../view/Details";
+import Home from '../view/Home';
+import Profile from '../view/Profile';
+import MenuDetails from '../view/MenuDetails';
 
 
 const Tab = createBottomTabNavigator();

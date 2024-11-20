@@ -4,6 +4,7 @@
 
 //importo la libreria sqlite
 import * as SQLite from 'expo-sqlite';
+//importo il controller delle comunicazioni
 import CommunicationController from './ComunicationController';
 
 

@@ -1,4 +1,4 @@
-import CommunicationController from "../app/model/ComunicationController";
+import CommunicationController from "../model/ComunicationController";
 
 export async function fetchMenu(sid) {
     try {
