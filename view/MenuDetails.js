@@ -1,9 +1,7 @@
-// MenuDetails.js
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
-
-import { fetchMenuDetails, fetchImage } from '../viewmodel/HomeViewModel';
+import { fetchMenuDetails } from '../viewmodel/HomeViewModel';
+import * as SQLite from 'expo-sqlite';
 
 export default function MenuDetails({ route }) {
 
@@ -17,13 +15,21 @@ export default function MenuDetails({ route }) {
     useEffect(() => {
         async function loadMenuDetails() {
             try {
+                const db = await SQLite.openDatabaseSync("MangiaBasta");
+
                 console.log("Menu:", menu.mid, "Location:", menu.location.lat, menu.location.lng);
 
                 const details = await fetchMenuDetails(menu.sid, menu.mid, menu.location.lat, menu.location.lng);
 
                 setMenuDetails(details);
                 console.log("Dettagli del menu:", details);
-                const imageUri = await fetchImage(menu.sid, menu.mid);
+                
+                const imgQuery = `
+                    SELECT base64 FROM MENU WHERE mid = ?;
+                `;
+                const menuImage = await db.getFirstAsync(imgQuery, [menu.mid]);
+                const imageUri = menuImage.base64;
+                
                 setMenuImage(imageUri);
             } catch (error) {
                 console.error("Errore durante il caricamento dei dettagli del menu:", error);

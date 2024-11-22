@@ -1,6 +1,3 @@
-
-// ComunicationController.js 
-
 class CommunicationController {
     
     static BASE_URL = "https://develop.ewlab.di.unimi.it/mc/2425/";
@@ -95,7 +92,7 @@ class CommunicationController {
 
     }
 
-    static async getMenuDetails(sid, mid ) {
+    static async getMenuDetails(sid, mid) {
         let endpoint = "menu/" + mid;
         let verb = 'GET';
     

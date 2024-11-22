@@ -1,3 +1,5 @@
+// questo è il viewmodel che si occupa di recuperare i dati dal modello e passarli alla view
+
 import CommunicationController from "../model/ComunicationController";
 
 export async function fetchMenu(sid) {

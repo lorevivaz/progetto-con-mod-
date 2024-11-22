@@ -1,12 +1,8 @@
-// MenuList.js
-
+// Home.js 
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
-
-
-
+import * as SQLite from 'expo-sqlite';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import { fetchMenu, fetchImage } from "../viewmodel/HomeViewModel";
 
 export default function Home({ navigation }) {
@@ -14,35 +10,57 @@ export default function Home({ navigation }) {
     const [sid, setSid] = useState(null);
     const [uid, setUid] = useState(null);
 
-
     useEffect(() => {
         AsyncStorage.getItem('user').then((user) => {
-            if (user) {
-                const parsedUser = JSON.parse(user);
-                const sid = parsedUser.sid;
-                const uid = parsedUser.uid;
-                setSid(sid);
-                setUid(uid);
-            }
+            const parsedUser = JSON.parse(user);
+            const sid = parsedUser.sid;
+            const uid = parsedUser.uid;
+            setSid(sid);
+            setUid(uid);
         });
     }, []);
+    
     
     useEffect(() => {
         if (sid && uid) {
             async function loadMenu() {
                 try {
-                    const menu = await fetchMenu(sid);
-                    const menuWithImages = await Promise.all(menu.map(async (item) => {
-                        const imageUri = await fetchImage(sid, item.mid);
+                    const db = await SQLite.openDatabaseSync("MangiaBasta");
+                    console.log("Database opened successfully.");
+                    await db.execAsync(`
+                        CREATE TABLE IF NOT EXISTS MENU (
+                            mid INTEGER PRIMARY KEY NOT NULL, 
+                            imgversion INTEGER NOT NULL, 
+                            base64 TEXT
+                        );
+                    `);
+                    const menu =await fetchMenu(sid);
+                    const menuWithImages = await Promise.all(menu.map(async(item) => {
+                        const imgQuery = `
+                            SELECT base64 FROM MENU WHERE mid = ? AND imgversion = ?;
+                        `;
+                        let menuImage = await db.getFirstAsync(imgQuery, [item.mid, item.imageVersion]);
+                        //console.log("immagine: ", menuImage);
+                        if (menuImage==null) {
+                            menuImage = await fetchImage(sid, item.mid);
+                            console.log("immagine: ", menuImage);
+                            await db.runAsync(
+                                "REPLACE INTO MENU (mid, imgversion, base64) VALUES (?, ?, ?);",
+                                [item.mid, item.imageVersion, menuImage]
+                            );
+                            console.log("Data replaced successfully.");
+                        } else {
+                            menuImage = menuImage.base64;
+                        }
+                        //console.log("immagine: ", menuImage);
                         return {
-                            ...item,
-                            imageUri: imageUri !== -1 ? imageUri : null,
-                        };
+                            ... item,
+                            menuImage: menuImage!==-1 ? menuImage:null,
+                        }
                     }));
-                    setMenuData(menuWithImages);
-                    console.log("Menu loaded:", menuWithImages);
+                    setMenuData(menuWithImages)
                 } catch (error) {
-                    console.error("Error loading menu:", error);
+                    console.log("Error: " + error.message);
                 }
             }
             loadMenu();
@@ -54,7 +72,7 @@ export default function Home({ navigation }) {
             style={styles.card}
             onPress={() => navigation.navigate('MenuDetails', { menu: { sid : sid, mid: item.mid, location: item.location } })}
         >
-            {item.imageUri && <Image source={{ uri: item.imageUri }} style={styles.menuImage} />}
+            {item.menuImage && <Image source={{ uri: item.menuImage }} style={styles.menuImage} />}
             <View style={styles.cardContent}>
                 <Text style={styles.menuName}>{item.name}</Text>
                 <Text style={styles.menuDescription}>{item.shortDescription}</Text>

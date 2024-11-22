@@ -28,10 +28,11 @@ export default function ProfileForm({ user, onInputChange, onSave }) {
                 onChangeText={(text) => onInputChange('cardFullName', text)}
             />
 
-            <Text style={styles.label}>Card Number:</Text>
+          <Text style={styles.label}>Card Number:</Text>
             <TextInput
                 style={styles.input}
                 value={user.cardNumber}
+                required pattern="[0-9]{16}" title = "16 digits"
                 onChangeText={(text) => onInputChange('cardNumber', text)}
                 keyboardType="numeric"
             />
@@ -39,7 +40,7 @@ export default function ProfileForm({ user, onInputChange, onSave }) {
             <Text style={styles.label}>Card Expire Month:</Text>
             <TextInput
                 style={styles.input}
-                value={user.cardExpireMonth}
+                value={` ${user.cardExpireMonth}`}
                 onChangeText={(text) => onInputChange('cardExpireMonth', text)}
                 keyboardType="numeric"
             />
@@ -47,10 +48,11 @@ export default function ProfileForm({ user, onInputChange, onSave }) {
             <Text style={styles.label}>Card Expire Year:</Text>
             <TextInput
                 style={styles.input}
-                value={user.cardExpireYear}
+                value={` ${user.cardExpireYear}`}
                 onChangeText={(text) => onInputChange('cardExpireYear', text)}
                 keyboardType="numeric"
             />
+
 
             <Text style={styles.label}>Card CVV:</Text>
             <TextInput
