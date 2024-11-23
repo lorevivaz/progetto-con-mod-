@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import Details from "../view/Details";
+import Order from "../view/Order";
 import Home from '../view/Home';
 import Profile from '../view/Profile';
 import MenuDetails from '../view/MenuDetails';
@@ -34,8 +34,9 @@ export default function Navigation() {
 
             if (route.name === 'Home') {
               iconName = 'home-outline';
-            } else if (route.name === 'Details') {
-              iconName = 'list-outline';
+            } else if (route.name === 'Order') {
+              // icona per un ordine di cibo
+              iconName = 'fast-food-outline'; 
             } else if (route.name === 'Profile') {
               iconName = 'person-outline';
             }
@@ -50,7 +51,7 @@ export default function Navigation() {
           component={HomeStack}
           options={{ headerShown: false }}
         />
-        <Tab.Screen name="Details" component={Details} />
+        <Tab.Screen name="Order" component={Order} />
         <Tab.Screen name="Profile" component={Profile} />
 
       </Tab.Navigator>

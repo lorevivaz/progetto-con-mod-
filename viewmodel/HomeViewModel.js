@@ -32,4 +32,15 @@ export async function fetchMenuDetails(sid, mid, lat, lng) {
         console.error("Errore durante il recupero dei dettagli del menu:", error);
         throw new Error("Errore durante il recupero dei dettagli del menu");
     }
+
+
+
+}
+// funzione che crea un ordine dopo aver selezionato un menu 
+export async function fetchBuy (sid, uid, mid, menu ) {
+    try {
+        return await CommunicationController.buyMenu(sid, uid, mid);
+    } catch (error) {
+        console.error("Error during POST request:", error);
+    }
 }

@@ -117,7 +117,7 @@ class CommunicationController {
     
 
 
-    static async putUser(sid, uid, user) {
+    static async putUser( sid , uid, user) {
 
         let endpoint = "user/" + uid; // Rimuoviamo 'sid' dalla query string
         const verb = 'PUT';
@@ -138,6 +138,21 @@ class CommunicationController {
     
         console.log("putUser chiamato con endpoint:", endpoint, "e bodyParams:", bodyParams);
 
+        return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
+    }
+
+    static async buyMenu(mid , sid ) {
+        let endpoint = "menu/" + mid + "/buy";
+        let verb = 'POST';
+
+        let queryParams = {};
+        let bodyParams = {
+              sid : sid ,
+              lat : this.lat,
+              lng : this.lng,
+
+        };
+        console.log("buyMenu called with endpoint:", endpoint, "and queryParams:", queryParams); 
         return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
     }
 

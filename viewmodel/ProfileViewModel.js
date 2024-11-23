@@ -1,7 +1,5 @@
 import CommunicationController from "../model/ComunicationController";
 
-
-
 export async function fetchData(sid, uid) {
     try {
         return CommunicationController.getUser(sid, uid);
@@ -22,3 +20,4 @@ export async function updateUserData(sid, uid, user) {
         console.error("Error during PUT request:", error);
     }
 }
+

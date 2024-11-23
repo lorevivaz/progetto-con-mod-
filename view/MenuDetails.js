@@ -73,10 +73,12 @@ export default function MenuDetails({ route }) {
             <Text style={styles.menuShortDescription}>{menuDetails.shortDescription}</Text>
             <Text style={styles.menuLongDescription}>{menuDetails.longDescription}</Text>
 
-            {/* Pulsante Acquista Ora */}
+            {/* Pulsante Acquista Ora che se cliccato fa la fetchbuy */}
             <TouchableOpacity style={styles.buyButton}>
                 <Text style={styles.buyButtonText}>Acquista Ora</Text>
             </TouchableOpacity>
+
+
         </ScrollView>
     );
 }
