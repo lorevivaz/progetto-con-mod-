@@ -1,16 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
-import { fetchMenuDetails } from '../viewmodel/HomeViewModel';
+import { fetchMenuDetails, fetchBuy } from '../viewmodel/HomeViewModel';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SQLite from 'expo-sqlite';
 
-export default function MenuDetails({ route }) {
 
-    const { menu } = route.params; // qui prendiamo il menu passato come parametro dalla schermata precedente (MenuList)
+export default function MenuDetails({ route, navigation }) {
+
+    const {  menu } = route.params; // qui prendiamo il menu passato come parametro dalla schermata precedente (Home.js)
 
 
     const [menuDetails, setMenuDetails] = useState(null);
     const [menuImage, setMenuImage] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const handleBuyNow = async () => {
+        try {
+            const response = await fetchBuy(menu.sid, menu.mid, menu.location.lat, menu.location.lng);
+            console.log("Acquisto effettuato con successo:", response);
+    
+            // Salva l'ordine nell'AsyncStorage
+            await AsyncStorage.setItem('lastOrder', JSON.stringify({ oid: response.oid, mid: menu.mid }));
+
+            // controllo se l'ordine è stato salvato
+            const lastOrder = await AsyncStorage.getItem('lastOrder');
+            console.log("L'ordine salvato è:", lastOrder);
+    
+            // Mostra conferma all'utente
+            alert('Acquisto completato con successo!');
+    
+            // Naviga alla schermata dell'ordine
+            navigation.navigate('Order', { order: response });
+        } catch (error) {
+            console.error("Errore durante l'acquisto del menu:", error);
+            alert('Errore durante l’acquisto. Riprova.');
+        }
+    };
+
 
     useEffect(() => {
         async function loadMenuDetails() {
@@ -73,10 +99,11 @@ export default function MenuDetails({ route }) {
             <Text style={styles.menuShortDescription}>{menuDetails.shortDescription}</Text>
             <Text style={styles.menuLongDescription}>{menuDetails.longDescription}</Text>
 
-            {/* Pulsante Acquista Ora che se cliccato fa la fetchbuy */}
-            <TouchableOpacity style={styles.buyButton}>
-                <Text style={styles.buyButtonText}>Acquista Ora</Text>
+            {/* Pulsante Acquista Ora che se cliccato fa la fetchbuy  e mi porta alla pagina order con la mappa */}
+            < TouchableOpacity style={styles.buyButton} onPress={handleBuyNow }>
+                <Text style={styles.buyButtonText}>Buy Now</Text>
             </TouchableOpacity>
+
 
 
         </ScrollView>

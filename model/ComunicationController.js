@@ -141,20 +141,44 @@ class CommunicationController {
         return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
     }
 
-    static async buyMenu(mid , sid ) {
-        let endpoint = "menu/" + mid + "/buy";
-        let verb = 'POST';
-
-        let queryParams = {};
-        let bodyParams = {
-              sid : sid ,
-              lat : this.lat,
-              lng : this.lng,
-
+    static async buyMenu(mid, sid) {
+        const endpoint = "menu/" + mid + "/buy";
+        const verb = 'POST';
+    
+        const queryParams = {}; // In questo caso, non ci sono query parameters
+        const bodyParams = {
+            sid: sid,
+            deliveryLocation: {
+                lat: this.lat,
+                lng: this.lng,
+            },
         };
-        console.log("buyMenu called with endpoint:", endpoint, "and queryParams:", queryParams); 
+    
+        console.log("buyMenu called with endpoint:", endpoint, "and bodyParams:", bodyParams);
+    
+        try {
+            // Esegui la richiesta generica
+            const response = await this.genericRequest(endpoint, verb, queryParams, bodyParams);
+            return response; // Restituisce la risposta del server
+        } catch (error) {
+            console.error("Errore durante l'acquisto del menu:", error);
+            throw error; // Rilancia l'errore per la gestione a livello superiore
+        }
+    }
+
+
+    static async getOrders(oid, sid) {
+        let endpoint = "order/"+ oid ; // oid è parte del percorso
+        let verb = 'GET';
+        let queryParams = { sid : sid }; 
+        let bodyParams = {}; // GET non richiede body
+    
+        console.log("getOrders chiamato con endpoint:", endpoint, " e queryParams: ", queryParams);
+    
         return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
     }
+
+
 
 }
 

@@ -37,10 +37,33 @@ export async function fetchMenuDetails(sid, mid, lat, lng) {
 
 }
 // funzione che crea un ordine dopo aver selezionato un menu 
-export async function fetchBuy (sid, uid, mid, menu ) {
+export async function fetchBuy(sid, mid, lat, lng) {
     try {
-        return await CommunicationController.buyMenu(sid, uid, mid);
+        const response = await CommunicationController.buyMenu(mid, sid, lat, lng);
+        if (response) {
+            console.log("Acquisto effettuato con successo:", response);
+            return response; // Restituisce i dettagli dell'ordine
+        } else {
+            throw new Error("La risposta della chiamata è vuota.");
+        }
     } catch (error) {
-        console.error("Error during POST request:", error);
+        console.error("Errore durante la fetchBuy:", error);
+        throw error; // Rilancia l'errore per gestirlo altrove
+    }
+}
+
+
+export async function fetchOrder (oid ,sid ) {
+    try {
+        const response = await CommunicationController.getOrders(oid, sid);
+        if (response) {
+            console.log("Ordine recuperato con successo:", response);
+            return response; // Restituisce i dettagli dell'ordine
+        } else {
+            throw new Error("La risposta della chiamata è vuota.");
+        }
+    } catch (error) {
+        console.error("Errore durante la fetchOrder:", error);
+        throw error; // Rilancia l'errore per gestirlo altrove
     }
 }

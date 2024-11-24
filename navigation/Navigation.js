@@ -51,7 +51,7 @@ export default function Navigation() {
           component={HomeStack}
           options={{ headerShown: false }}
         />
-        <Tab.Screen name="Order" component={Order} />
+        <Tab.Screen name="Order" component={Order}  options={{ headerShown: false }} />
         <Tab.Screen name="Profile" component={Profile} />
 
       </Tab.Navigator>

@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchMenu, fetchImage } from "../viewmodel/HomeViewModel";
 
 export default function Home({ navigation }) {
+    
     const [menuData, setMenuData] = useState([]);
     const [sid, setSid] = useState(null);
     const [uid, setUid] = useState(null);
