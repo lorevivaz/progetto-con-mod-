@@ -4,6 +4,7 @@ import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react
 import * as SQLite from 'expo-sqlite';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchMenu, fetchImage } from "../viewmodel/HomeViewModel";
+import { locationPermissionAsync } from '../component/MapComponent';
 
 export default function Home({ navigation }) {
     
@@ -27,7 +28,9 @@ export default function Home({ navigation }) {
             async function loadMenu() {
                 try {
                     const db = await SQLite.openDatabaseSync("MangiaBasta");
-                    console.log("Database opened successfully.");
+                    console.log("Database aperto con successo.");
+                    
+                    // Creazione della tabella MENU se non esiste
                     await db.execAsync(`
                         CREATE TABLE IF NOT EXISTS MENU (
                             mid INTEGER PRIMARY KEY NOT NULL, 
@@ -35,35 +38,55 @@ export default function Home({ navigation }) {
                             base64 TEXT
                         );
                     `);
-                    const menu =await fetchMenu(sid);
-                    const menuWithImages = await Promise.all(menu.map(async(item) => {
-                        const imgQuery = `
-                            SELECT base64 FROM MENU WHERE mid = ? AND imgversion = ?;
-                        `;
-                        let menuImage = await db.getFirstAsync(imgQuery, [item.mid, item.imageVersion]);
-                        //console.log("immagine: ", menuImage);
-                        if (menuImage==null) {
-                            menuImage = await fetchImage(sid, item.mid);
-                            console.log("immagine: ", menuImage);
-                            await db.runAsync(
-                                "REPLACE INTO MENU (mid, imgversion, base64) VALUES (?, ?, ?);",
-                                [item.mid, item.imageVersion, menuImage]
-                            );
-                            console.log("Data replaced successfully.");
-                        } else {
-                            menuImage = menuImage.base64;
-                        }
-                        //console.log("immagine: ", menuImage);
-                        return {
-                            ... item,
-                            menuImage: menuImage!==-1 ? menuImage:null,
-                        }
-                    }));
-                    setMenuData(menuWithImages)
+    
+                    // Richiedi i permessi per accedere alla posizione
+                    const location = await locationPermissionAsync();
+    
+                    if (location) {
+                        const { latitude: lat, longitude: lng } = location;
+                        console.log("Latitudine e Longitudine:", lat, lng);
+    
+                        // Fetch del menu basato sulla posizione
+                        const menu = await fetchMenu(lat, lng, sid);
+    
+                        // Processa il menu e gestisci le immagini
+                        const menuWithImages = await Promise.all(menu.map(async (item) => {
+                            const imgQuery = `
+                                SELECT base64 FROM MENU WHERE mid = ? AND imgversion = ?;
+                            `;
+                            let menuImage = await db.getFirstAsync(imgQuery, [item.mid, item.imageVersion]);
+    
+                            if (!menuImage) {
+                                // Se l'immagine non esiste, fetch dal server
+                                menuImage = await fetchImage(sid, item.mid);
+                                console.log("Immagine scaricata:", menuImage);
+    
+                                // Salva l'immagine nel database
+                                await db.runAsync(
+                                    "REPLACE INTO MENU (mid, imgversion, base64) VALUES (?, ?, ?);",
+                                    [item.mid, item.imageVersion, menuImage]
+                                );
+                                console.log("Immagine salvata nel database.");
+                            } else {
+                                // Ottieni l'immagine dal database
+                                menuImage = menuImage.base64;
+                            }
+    
+                            return {
+                                ...item,
+                                menuImage: menuImage !== -1 ? menuImage : null,
+                            };
+                        }));
+    
+                        setMenuData(menuWithImages);
+                    } else {
+                        console.error("Impossibile ottenere la posizione. I permessi potrebbero essere negati.");
+                    }
                 } catch (error) {
-                    console.log("Error: " + error.message);
+                    console.error("Errore:", error.message);
                 }
             }
+    
             loadMenu();
         }
     }, [sid, uid]);
@@ -71,7 +94,7 @@ export default function Home({ navigation }) {
     const renderItem = ({ item }) => (
         <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('MenuDetails', { menu: { sid : sid, mid: item.mid, location: item.location } })}
+            onPress={() => navigation.navigate('MenuDetails', { menu: { sid : sid, mid: item.mid, location: item.location, deliveryTime: item.deliveryTime } })}
         >
             {item.menuImage && <Image source={{ uri: item.menuImage }} style={styles.menuImage} />}
             <View style={styles.cardContent}>

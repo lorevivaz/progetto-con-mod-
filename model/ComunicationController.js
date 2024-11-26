@@ -3,8 +3,8 @@ class CommunicationController {
     static BASE_URL = "https://develop.ewlab.di.unimi.it/mc/2425/";
 
     //posizione hardcoded, da implementare con la posizione reale
-    static lat = 45.4642;
-    static lng = 9.19;
+    //static lat = 45.4642;
+   //  static lng = 9.19;
 
 
     static async genericRequest(endpoint, verb, queryParams , bodyParams ) {
@@ -60,10 +60,10 @@ class CommunicationController {
     }
 
 
-    static async getMenu(sid){
+    static async getMenu(lat, lng, sid) {
         let endpoint = "menu/";
         let verb = 'GET';
-        let queryParams = { lat: this.lat, lng: this.lng, sid: sid };
+        let queryParams = { lat: lat, lng: lng, sid: sid };
         let bodyParams = {};
 
         console.log("getMenu called with endpoint:", endpoint, "and queryParams:", queryParams);
@@ -92,14 +92,14 @@ class CommunicationController {
 
     }
 
-    static async getMenuDetails(sid, mid) {
+    static async getMenuDetails(sid, mid, lat, lng) {
         let endpoint = "menu/" + mid;
         let verb = 'GET';
     
         let queryParams = {
             sid: sid, 
-            lat: this.lat,  // Latitudine predefinita
-            lng: this.lng,     // Longitudine predefinita
+            lat: lat,  // Latitudine predefinita
+            lng: lng,     // Longitudine predefinita
         };
         let bodyParams = {};
         
@@ -141,7 +141,7 @@ class CommunicationController {
         return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
     }
 
-    static async buyMenu(mid, sid) {
+    static async buyMenu(mid, sid , lat, lng) {
         const endpoint = "menu/" + mid + "/buy";
         const verb = 'POST';
     
@@ -149,8 +149,8 @@ class CommunicationController {
         const bodyParams = {
             sid: sid,
             deliveryLocation: {
-                lat: this.lat,
-                lng: this.lng,
+                lat: lat,
+                lng: lng,
             },
         };
     

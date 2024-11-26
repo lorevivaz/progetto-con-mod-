@@ -1,6 +1,8 @@
+
+//MenuDetails.js visualizza i dettagli di un menu selezionato dall'utente.
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
-import { fetchMenuDetails, fetchBuy } from '../viewmodel/HomeViewModel';
+import { fetchMenuDetails, fetchBuy, fetchOrder } from '../viewmodel/HomeViewModel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SQLite from 'expo-sqlite';
 
@@ -14,23 +16,36 @@ export default function MenuDetails({ route, navigation }) {
     const [menuImage, setMenuImage] = useState(null);
     const [loading, setLoading] = useState(true);
 
+
+
     const handleBuyNow = async () => {
         try {
-            const response = await fetchBuy(menu.sid, menu.mid, menu.location.lat, menu.location.lng);
+            // Recupera l'ultimo ordine salvato
+            const lastOrder = await AsyncStorage.getItem('lastOrder');
+            if (lastOrder) {
+                const parsedOrder = JSON.parse(lastOrder);
+    
+                // Controlla lo stato dell'ordine salvato
+                const sid = menu.sid;
+
+                const existingOrder = await fetchOrder(parsedOrder.oid, sid);
+    
+                if (existingOrder && existingOrder.status !== 'COMPLETED') {
+                    alert('Hai già un ordine attivo. Completa o cancella l’ordine esistente prima di effettuarne uno nuovo.');
+                    return;
+                }
+            }
+    
+            // Effettua l'acquisto se non ci sono ordini attivi
+            const response = await fetchBuy(menu.mid , menu.sid,  menu.location.lat, menu.location.lng);
             console.log("Acquisto effettuato con successo:", response);
     
-            // Salva l'ordine nell'AsyncStorage
+            // Salva il nuovo ordine
             await AsyncStorage.setItem('lastOrder', JSON.stringify({ oid: response.oid, mid: menu.mid }));
-
-            // controllo se l'ordine è stato salvato
-            const lastOrder = await AsyncStorage.getItem('lastOrder');
-            console.log("L'ordine salvato è:", lastOrder);
     
-            // Mostra conferma all'utente
             alert('Acquisto completato con successo!');
-    
-            // Naviga alla schermata dell'ordine
             navigation.navigate('Order', { order: response });
+    
         } catch (error) {
             console.error("Errore durante l'acquisto del menu:", error);
             alert('Errore durante l’acquisto. Riprova.');
@@ -82,7 +97,10 @@ export default function MenuDetails({ route, navigation }) {
         );
     }
 
+
+    // il deliverytime lo recuperiamo dal menu passato come parametro
     return (
+
         <ScrollView style={styles.container}>
             <Text style={styles.menuName}>{menuDetails.name}</Text>
             {menuImage && (
@@ -91,7 +109,8 @@ export default function MenuDetails({ route, navigation }) {
             <View style={styles.infoContainer}>
                 <Text style={styles.menuPrice}>Price: {menuDetails.price}€</Text>
 
-                <Text style={styles.menuDelivery}> Delivery Time: {menuDetails.deliveryTime} min</Text>
+                < Text style={styles.menuDelivery}> Delivery Time: {menu.deliveryTime} min</Text>
+
                 <Text style={styles.menuLocation}>
                     Location: Lat {menuDetails.location.lat}, Lng {menuDetails.location.lng}
                 </Text>
@@ -189,10 +208,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         alignItems: 'center',
         marginVertical: 20,
-        shadowColor: '#ff6347',
-        shadowOpacity: 0.3,
-        shadowOffset: { width: 0, height: 4 },
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
         elevation: 5,
+        transition: 'background-color 0.3s',
     },
     buyButtonText: {
         fontSize: 18,

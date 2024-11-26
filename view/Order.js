@@ -1,69 +1,83 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchOrder } from '../viewmodel/HomeViewModel';
+import * as Location from 'expo-location';
 
-function Order({ route }) {
-
-
-
+function Order({ route, navigation }) {
     const [orderData, setOrderData] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    const [sid, setSid] = useState(null);
-
-    useEffect(() => {
-        // recupera l'utente dall'AsyncStorage e imposta il sid
-        AsyncStorage.getItem('user').then((user) => {
-            const parsedUser = JSON.parse(user);
-            const sid = parsedUser.sid;
-            setSid(sid);
-        });
-    }, []);
-
-
-
+    const [userLocation, setUserLocation] = useState(null);
 
     useEffect(() => {
-        if (sid) {
-            async function loadOrder() {
-                try {
-                    let order = route.params?.order;
+        let locationSubscription;
 
-                    // Se non ci sono dati, recupera l'oid dall'AsyncStorage
-                    if (!order) {
-                        const lastOrder = await AsyncStorage.getItem('lastOrder');
-                        if (lastOrder) {
-                            const parsedOrder = JSON.parse(lastOrder);
-                            const oid = parsedOrder?.oid;
-                            const mid = parsedOrder?.mid;
+        async function loadOrderAndStartLocationTracking() {
+            try {
+                // Recupera ordine
+                const user = await AsyncStorage.getItem('user');
+                const parsedUser = JSON.parse(user);
+                const sid = parsedUser.sid;
 
-                            // Fetch dei dettagli ordine con l'oid recuperato
-                            if (oid && mid) {
-
-                                order = await fetchOrder(oid, sid);
-
-
-                            }
-                        }
+                let order = route.params?.order;
+                if (!order) {
+                    const lastOrder = await AsyncStorage.getItem('lastOrder');
+                    if (lastOrder) {
+                        const parsedOrder = JSON.parse(lastOrder);
+                        order = await fetchOrder(parsedOrder.oid, sid);
                     }
-
-                    // Aggiorna i dati dell'ordine
-                    if (order) {
-                        setOrderData(order);
-                    } else {
-                        console.error("Nessun ordine trovato.");
-                    }
-                } catch (error) {
-                    console.error("Errore durante il caricamento dell'ordine:", error);
-                } finally {
-                    setLoading(false);
                 }
-            }
 
-            loadOrder();
+                if (!order) {
+                    Alert.alert("Errore", "Nessun ordine trovato.");
+                    navigation.navigate("Home");
+                    return;
+                }
+
+                setOrderData(order);
+
+                // Posizione iniziale
+                const { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted') {
+                    Alert.alert("Permesso negato", "Abilita i permessi di posizione per continuare.");
+                    return;
+                }
+
+                const initialLocation = await Location.getCurrentPositionAsync();
+                setUserLocation({
+                    latitude: initialLocation.coords.latitude,
+                    longitude: initialLocation.coords.longitude,
+                });
+
+                console.log("Posizione iniziale:", userLocation);
+
+                // Tracking posizione
+                locationSubscription = await Location.watchPositionAsync(
+                    {
+                        accuracy: Location.Accuracy.Balanced,
+                        timeInterval: 5000,
+                        distanceInterval: 10,
+                    },
+                    (newLocation) => {
+                        const { latitude, longitude } = newLocation.coords;
+                        setUserLocation({ latitude, longitude });
+                    }
+                );
+            } catch (error) {
+                console.error("Errore:", error);
+                Alert.alert("Errore", "Impossibile ottenere i dati dell'ordine o della posizione.");
+            } finally {
+                setLoading(false);
+            }
         }
-    }, [route.params, sid]);
+
+        loadOrderAndStartLocationTracking();
+
+        return () => {
+            if (locationSubscription) locationSubscription.remove();
+        };
+    }, [route.params]);
 
     if (loading) {
         return (
@@ -73,15 +87,17 @@ function Order({ route }) {
         );
     }
 
-    if (!orderData) {
+    if (!orderData || !userLocation) {
         return (
             <View style={styles.container}>
-                <Text style={styles.errorText}>Non ci sono dettagli dell'ordine disponibili. Effettua un acquisto per visualizzarlo.</Text>
+                <Text style={styles.errorText}>Dettagli dell'ordine o posizione non disponibili.</Text>
             </View>
         );
     }
+
     return (
         <View style={styles.container}>
+            {/* Card con dettagli dell'ordine */}
             <View style={styles.card}>
                 <Text style={styles.title}>Dettagli dell'Ordine</Text>
                 <Text style={styles.label}>ID Ordine:</Text>
@@ -93,9 +109,63 @@ function Order({ route }) {
                 <Text style={styles.label}>Tempo di consegna:</Text>
                 <Text style={styles.value}>{new Date(orderData.deliveryTimestamp).toLocaleString()}</Text>
             </View>
-            <View style={styles.mapPlaceholder}>
-                <Text style={styles.mapText}>Mappa (in arrivo...)</Text>
-            </View>
+
+            {/* Mappa */}
+            <MapView
+                style={styles.map}
+                initialCamera={{
+                    center: {
+                      latitude: userLocation.latitude,
+                      longitude: userLocation.longitude,
+                    },
+                    pitch: 50,
+                    heading: 200,
+                    zoom: 18,
+                  }}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
+            >
+                {/* Marker dell'utente */}
+                {userLocation.latitude && userLocation.longitude && (
+                    <Marker
+                        coordinate={userLocation}
+                        title="La tua posizione"
+                        pinColor="blue"
+                    />
+                )}
+
+                {/* Marker dell'ordine */}
+                {orderData.currentPosition?.latitude && orderData.currentPosition?.longitude && (
+                    <Marker
+                        coordinate={orderData.currentPosition}
+                        title="Ordine in consegna"
+                        pinColor="green"
+                    />
+                )}
+
+                {/* Marker della destinazione */}
+                {orderData.deliveryLocation?.latitude && orderData.deliveryLocation?.longitude && (
+                    <Marker
+                        coordinate={orderData.deliveryLocation}
+                        title="Destinazione ordine"
+                        pinColor="red"
+                    />
+                )}
+
+                {/* Percorso */}
+                {orderData.currentPosition?.latitude &&
+                    orderData.deliveryLocation?.latitude && (
+                        <Polyline
+                            coordinates={[
+                                userLocation,
+                                orderData.currentPosition,
+                                orderData.deliveryLocation,
+                            ]}
+                            strokeColor="#000" // Nero
+                            strokeWidth={3}
+                        />
+                    )}
+            </MapView>
         </View>
     );
 }
@@ -103,47 +173,39 @@ function Order({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#f8f8f8',
     },
     card: {
         backgroundColor: '#fff',
         borderRadius: 8,
         padding: 16,
+        marginBottom: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 2,
-        marginBottom: 16,
     },
     title: {
-        fontSize: 24,
+        fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 16,
+        marginBottom: 8,
         textAlign: 'center',
     },
     label: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
-        marginTop: 8,
     },
     value: {
-        fontSize: 16,
-        marginBottom: 8,
+        fontSize: 14,
+        marginBottom: 4,
     },
-    mapPlaceholder: {
+    map: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 16,
-        backgroundColor: '#e0e0e0',
-        borderRadius: 8,
-        padding: 16,
     },
-    mapText: {
-        fontSize: 16,
-        color: '#888',
+    errorText: {
+        textAlign: 'center',
+        color: 'red',
+        marginTop: 20,
     },
 });
 

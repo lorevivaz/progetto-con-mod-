@@ -2,9 +2,9 @@
 
 import CommunicationController from "../model/ComunicationController";
 
-export async function fetchMenu(sid) {
+export async function fetchMenu(lat, lng, sid) {
     try {
-        return await CommunicationController.getMenu(sid);
+        return await CommunicationController.getMenu(lat , lng, sid);
     } catch (error) {
         console.error("Error during GET request:", error);
     }
@@ -37,7 +37,7 @@ export async function fetchMenuDetails(sid, mid, lat, lng) {
 
 }
 // funzione che crea un ordine dopo aver selezionato un menu 
-export async function fetchBuy(sid, mid, lat, lng) {
+export async function fetchBuy(mid, sid , lat, lng) {
     try {
         const response = await CommunicationController.buyMenu(mid, sid, lat, lng);
         if (response) {

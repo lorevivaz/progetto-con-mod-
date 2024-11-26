@@ -2,9 +2,9 @@ import * as Location from 'expo-location';
 import { Alert } from 'react-native';
 import React, { useState } from 'react';
 
-const [location, setLocation] = useState(null);
+// const [location, setLocation] = useState(null);
 
-async function locationPermissionAsync() {
+export async function locationPermissionAsync() {
     let canUseLocation = false;
     const grantedPermission = await Location.getForegroundPermissionsAsync();
     
@@ -32,6 +32,7 @@ async function locationPermissionAsync() {
     }
 }
 
+/*
 export async function FetchLocation() {
     try {
       const currentLocation = await locationPermissionAsync();
@@ -48,3 +49,6 @@ export async function FetchLocation() {
       console.error("Error fetching location:", error);
     }
   }
+
+
+  */
