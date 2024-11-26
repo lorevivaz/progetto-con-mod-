@@ -20,9 +20,12 @@ const { location } = route.params; // qui prendiamo la location passata come par
 
     const handleBuyNow = async () => {
         try {
+
             // Recupera l'ultimo ordine salvato
             const lastOrder = await AsyncStorage.getItem('lastOrder');
+
             if (lastOrder) {
+
                 const parsedOrder = JSON.parse(lastOrder);
     
                 // Controlla lo stato dell'ordine salvato
@@ -33,7 +36,11 @@ const { location } = route.params; // qui prendiamo la location passata come par
                 if (existingOrder && existingOrder.status !== 'COMPLETED') {
                     alert('Hai già un ordine attivo. Completa o cancella l’ordine esistente prima di effettuarne uno nuovo.');
                     return;
+                } else if (existingOrder && existingOrder.status == 'COMPLETED') {
+                    // Cancella l'ordine esistente
+                    await AsyncStorage.removeItem('lastOrder');
                 }
+
             }
     
             // Effettua l'acquisto se non ci sono ordini attivi
@@ -47,7 +54,7 @@ const { location } = route.params; // qui prendiamo la location passata come par
             console.log("location :",  location)
             // Naviga alla schermata Order.js con l'ordine appena creato e la positione dell'utente 
 
-            navigation.navigate('Order', { order: response, location: location });
+            navigation.navigate('Order');
 
 
             alert('Acquisto completato con successo!');
