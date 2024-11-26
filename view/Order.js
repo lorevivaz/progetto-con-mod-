@@ -116,14 +116,18 @@ function Order({ route, navigation }) {
                   }}
                 showsMyLocationButton={true}
             >
-                {/* Marker dell'utente */}
-                {userLocation.latitude && userLocation.longitude && (
+                {/* Marker dell'utente 
+                
+                 {userLocation.latitude && userLocation.longitude && (
                     <Marker
                         coordinate={userLocation}
                         title="La tua posizione"
                         pinColor="blue"
                     />
                 )}
+
+                */}
+               
 
                 {/* Marker dell'ordine */}
                 {orderData.currentPosition?.lat && orderData.currentPosition?.lng && (
@@ -145,7 +149,7 @@ function Order({ route, navigation }) {
                             latitude: orderData.deliveryLocation.lat,
                             longitude: orderData.deliveryLocation.lng,
                         }}
-                        title="Ristorante"
+                        title="poszone di consegna"
                         pinColor="red"
                     />
                 )}
