@@ -19,11 +19,11 @@ export async function locationPermissionAsync() {
 
     if (canUseLocation) {
         const location = await Location.getCurrentPositionAsync();
-        console.log("received location:", location);
+       // console.log("received location:", location);
 
         const lat = location.coords.latitude;
         const lng = location.coords.longitude;
-        console.log("lat and lng are:", lat, lng);
+        //console.log("lat and lng are:", lat, lng);
 
         return { latitude: lat, longitude: lng };
     } else {

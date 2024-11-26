@@ -11,6 +11,7 @@ export default function Home({ navigation }) {
     const [menuData, setMenuData] = useState([]);
     const [sid, setSid] = useState(null);
     const [uid, setUid] = useState(null);
+    const [location, setLocation] = useState(null);
 
     useEffect(() => {
         AsyncStorage.getItem('user').then((user) => {
@@ -28,7 +29,7 @@ export default function Home({ navigation }) {
             async function loadMenu() {
                 try {
                     const db = await SQLite.openDatabaseSync("MangiaBasta");
-                    console.log("Database aperto con successo.");
+                   // console.log("Database aperto con successo.");
                     
                     // Creazione della tabella MENU se non esiste
                     await db.execAsync(`
@@ -41,11 +42,11 @@ export default function Home({ navigation }) {
     
                     // Richiedi i permessi per accedere alla posizione
                     const location = await locationPermissionAsync();
-    
+                    
                     if (location) {
                         const { latitude: lat, longitude: lng } = location;
-                        console.log("Latitudine e Longitudine:", lat, lng);
-    
+                      //  console.log("Latitudine e Longitudine:", lat, lng);
+                      setLocation(location);
                         // Fetch del menu basato sulla posizione
                         const menu = await fetchMenu(lat, lng, sid);
     
@@ -89,12 +90,12 @@ export default function Home({ navigation }) {
     
             loadMenu();
         }
-    }, [sid, uid]);
+    }, [sid, uid, location]);
 
     const renderItem = ({ item }) => (
         <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate('MenuDetails', { menu: { sid : sid, mid: item.mid, location: item.location, deliveryTime: item.deliveryTime } })}
+            onPress={() => navigation.navigate('MenuDetails', { menu: { sid: sid, mid: item.mid, deliveryTime: item.deliveryTime }, location: location })}
         >
             {item.menuImage && <Image source={{ uri: item.menuImage }} style={styles.menuImage} />}
             <View style={styles.cardContent}>

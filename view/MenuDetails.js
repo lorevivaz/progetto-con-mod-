@@ -10,7 +10,7 @@ import * as SQLite from 'expo-sqlite';
 export default function MenuDetails({ route, navigation }) {
 
     const {  menu } = route.params; // qui prendiamo il menu passato come parametro dalla schermata precedente (Home.js)
-
+const { location } = route.params; // qui prendiamo la location passata come parametro dalla schermata precedente (Home.js)
 
     const [menuDetails, setMenuDetails] = useState(null);
     const [menuImage, setMenuImage] = useState(null);
@@ -37,14 +37,19 @@ export default function MenuDetails({ route, navigation }) {
             }
     
             // Effettua l'acquisto se non ci sono ordini attivi
-            const response = await fetchBuy(menu.mid , menu.sid,  menu.location.lat, menu.location.lng);
+            const response = await fetchBuy(menu.mid , menu.sid,  location.latitude, location.longitude);
             console.log("Acquisto effettuato con successo:", response);
     
             // Salva il nuovo ordine
             await AsyncStorage.setItem('lastOrder', JSON.stringify({ oid: response.oid, mid: menu.mid }));
-    
+
+
+            console.log("location :",  location)
+            navigation.navigate('Order', { order: response, location: location });
+
+
             alert('Acquisto completato con successo!');
-            navigation.navigate('Order', { order: response });
+            
     
         } catch (error) {
             console.error("Errore durante l'acquisto del menu:", error);
@@ -56,11 +61,14 @@ export default function MenuDetails({ route, navigation }) {
     useEffect(() => {
         async function loadMenuDetails() {
             try {
+
+                console.log( "la pisiozqwknvbiuvbvireiw:", location.latitude, location.longitude);
+
                 const db = await SQLite.openDatabaseSync("MangiaBasta");
 
-                console.log("Menu:", menu.mid, "Location:", menu.location.lat, menu.location.lng);
+                console.log("Menu:", menu.mid, "Location:", location.latitude, location.longitude);
 
-                const details = await fetchMenuDetails(menu.sid, menu.mid, menu.location.lat, menu.location.lng);
+                const details = await fetchMenuDetails(menu.sid, menu.mid, location.latitude, location.longitude);
 
                 setMenuDetails(details);
                 console.log("Dettagli del menu:", details);
@@ -79,7 +87,7 @@ export default function MenuDetails({ route, navigation }) {
             }
         }
         loadMenuDetails();
-    }, [menu.mid, menu.location.lat, menu.location.lng]);
+    }, [menu.mid, location.latitude, location.longitude]);
 
     if (loading) {
         return (
@@ -109,7 +117,7 @@ export default function MenuDetails({ route, navigation }) {
             <View style={styles.infoContainer}>
                 <Text style={styles.menuPrice}>Price: {menuDetails.price}€</Text>
 
-                < Text style={styles.menuDelivery}> Delivery Time: {menu.deliveryTime} min</Text>
+                < Text style={styles.menuDelivery}> Delivery Time: {menuDetails.deliveryTime} min</Text>
 
                 <Text style={styles.menuLocation}>
                     Location: Lat {menuDetails.location.lat}, Lng {menuDetails.location.lng}

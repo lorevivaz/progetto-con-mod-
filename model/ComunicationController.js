@@ -66,7 +66,7 @@ class CommunicationController {
         let queryParams = { lat: lat, lng: lng, sid: sid };
         let bodyParams = {};
 
-        console.log("getMenu called with endpoint:", endpoint, "and queryParams:", queryParams);
+       // console.log("getMenu called with endpoint:", endpoint, "and queryParams:", queryParams);
 
         return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
     }

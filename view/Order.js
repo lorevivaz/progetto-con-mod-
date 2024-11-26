@@ -6,6 +6,10 @@ import { fetchOrder } from '../viewmodel/HomeViewModel';
 import * as Location from 'expo-location';
 
 function Order({ route, navigation }) {
+
+   
+    
+
     const [orderData, setOrderData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [userLocation, setUserLocation] = useState(null);
@@ -38,19 +42,8 @@ function Order({ route, navigation }) {
                 setOrderData(order);
 
                 // Posizione iniziale
-                const { status } = await Location.requestForegroundPermissionsAsync();
-                if (status !== 'granted') {
-                    Alert.alert("Permesso negato", "Abilita i permessi di posizione per continuare.");
-                    return;
-                }
-
-                const initialLocation = await Location.getCurrentPositionAsync();
-                setUserLocation({
-                    latitude: initialLocation.coords.latitude,
-                    longitude: initialLocation.coords.longitude,
-                });
-
-                console.log("Posizione iniziale:", userLocation);
+                const { latitude, longitude } = location;
+                setUserLocation({ latitude, longitude });
 
                 // Tracking posizione
                 locationSubscription = await Location.watchPositionAsync(
@@ -107,7 +100,8 @@ function Order({ route, navigation }) {
                 <Text style={styles.label}>Creazione:</Text>
                 <Text style={styles.value}>{new Date(orderData.creationTimestamp).toLocaleString()}</Text>
                 <Text style={styles.label}>Tempo di consegna:</Text>
-                <Text style={styles.value}>{new Date(orderData.deliveryTimestamp).toLocaleString()}</Text>
+                {/* fai un controllo. se deliveryTimestamp è null non stampa nulla */}
+                <Text style={styles.value}>{orderData.deliveryTimestamp ? new Date(orderData.deliveryTimestamp).toLocaleString() : ''}</Text>
             </View>
 
             {/* Mappa */}
@@ -135,15 +129,17 @@ function Order({ route, navigation }) {
                 )}
 
                 {/* Marker dell'ordine */}
-                {orderData.currentPosition?.latitude && orderData.currentPosition?.longitude && (
+                {orderData.currentPosition?.lat && orderData.currentPosition?.lng && (
                     <Marker
-                        coordinate={orderData.currentPosition}
+                        //voglio passare in modo separato latitude e lonogitude
+                        latitude={orderData.currentPosition.lat}
+                        longitude={orderData.currentPosition.lng}
                         title="Ordine in consegna"
                         pinColor="green"
                     />
                 )}
 
-                {/* Marker della destinazione */}
+                {/* Marker della destinazion
                 {orderData.deliveryLocation?.latitude && orderData.deliveryLocation?.longitude && (
                     <Marker
                         coordinate={orderData.deliveryLocation}
@@ -151,20 +147,12 @@ function Order({ route, navigation }) {
                         pinColor="red"
                     />
                 )}
+                
+                
+                */}
+                
 
-                {/* Percorso */}
-                {orderData.currentPosition?.latitude &&
-                    orderData.deliveryLocation?.latitude && (
-                        <Polyline
-                            coordinates={[
-                                userLocation,
-                                orderData.currentPosition,
-                                orderData.deliveryLocation,
-                            ]}
-                            strokeColor="#000" // Nero
-                            strokeWidth={3}
-                        />
-                    )}
+            
             </MapView>
         </View>
     );
