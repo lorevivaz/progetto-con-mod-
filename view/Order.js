@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchOrder } from '../viewmodel/HomeViewModel';
 import * as Location from 'expo-location';
 
 function Order({ route, navigation }) {
-
-   
-    
-
     const [orderData, setOrderData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [userLocation, setUserLocation] = useState(null);
@@ -42,14 +38,17 @@ function Order({ route, navigation }) {
                 setOrderData(order);
 
                 // Posizione iniziale
-                const { latitude, longitude } = location;
-                setUserLocation({ latitude, longitude });
+                const location = route.params?.location;
+                if (location) {
+                    const { latitude, longitude } = location;
+                    setUserLocation({ latitude, longitude });
+                }
 
                 // Tracking posizione
                 locationSubscription = await Location.watchPositionAsync(
                     {
                         accuracy: Location.Accuracy.Balanced,
-                        timeInterval: 5000,
+                        timeInterval: 5000, // 5 secondi tra un aggiornamento 
                         distanceInterval: 10,
                     },
                     (newLocation) => {
@@ -100,7 +99,6 @@ function Order({ route, navigation }) {
                 <Text style={styles.label}>Creazione:</Text>
                 <Text style={styles.value}>{new Date(orderData.creationTimestamp).toLocaleString()}</Text>
                 <Text style={styles.label}>Tempo di consegna:</Text>
-                {/* fai un controllo. se deliveryTimestamp è null non stampa nulla */}
                 <Text style={styles.value}>{orderData.deliveryTimestamp ? new Date(orderData.deliveryTimestamp).toLocaleString() : ''}</Text>
             </View>
 
@@ -116,7 +114,6 @@ function Order({ route, navigation }) {
                     heading: 200,
                     zoom: 18,
                   }}
-                showsUserLocation={true}
                 showsMyLocationButton={true}
             >
                 {/* Marker dell'utente */}
@@ -131,28 +128,28 @@ function Order({ route, navigation }) {
                 {/* Marker dell'ordine */}
                 {orderData.currentPosition?.lat && orderData.currentPosition?.lng && (
                     <Marker
-                        //voglio passare in modo separato latitude e lonogitude
-                        latitude={orderData.currentPosition.lat}
-                        longitude={orderData.currentPosition.lng}
+                        coordinate={{
+                            latitude: orderData.currentPosition.lat,
+                            longitude: orderData.currentPosition.lng,
+                        }}
                         title="Ordine in consegna"
                         pinColor="green"
                     />
                 )}
 
-                {/* Marker della destinazion
-                {orderData.deliveryLocation?.latitude && orderData.deliveryLocation?.longitude && (
+                {/* Marker del ristorante */}
+
+                {orderData.deliveryLocation?.lat && orderData.deliveryLocation?.lng && (
                     <Marker
-                        coordinate={orderData.deliveryLocation}
-                        title="Destinazione ordine"
+                        coordinate={{
+                            latitude: orderData.deliveryLocation.lat,
+                            longitude: orderData.deliveryLocation.lng,
+                        }}
+                        title="Ristorante"
                         pinColor="red"
                     />
                 )}
-                
-                
-                */}
-                
 
-            
             </MapView>
         </View>
     );

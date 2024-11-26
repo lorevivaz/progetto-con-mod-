@@ -45,6 +45,8 @@ const { location } = route.params; // qui prendiamo la location passata come par
 
 
             console.log("location :",  location)
+            // Naviga alla schermata Order.js con l'ordine appena creato e la positione dell'utente 
+
             navigation.navigate('Order', { order: response, location: location });
 
 
