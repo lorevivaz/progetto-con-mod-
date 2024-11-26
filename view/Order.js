@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchOrder } from "../viewmodel/HomeViewModel";
-import * as Location from "expo-location";
+import { Image } from "react-native";
 
 function Order({ navigation }) {
   const [orderData, setOrderData] = useState({
@@ -133,18 +133,19 @@ function Order({ navigation }) {
         showsMyLocationButton={true}
       >
     
-
-        {/* Marker del drone  */}
-        {droneLocation?.lat && droneLocation.lng && (
+ {/* Marker del drone  */}
+ {droneLocation?.lat && droneLocation.lng && (
           <Marker
-            coordinate={{
-              latitude: droneLocation.lat,
-              longitude: droneLocation.lng,
-            }}
-            title="drone in consegna "
-            // cmabiare forma del marker
-            pinColor="green"
+          coordinate={{
+            latitude: droneLocation.lat,
+            longitude: droneLocation.lng,
+          }}
+        >
+          <Image
+            source={require('../assets/icon-drone.png')} // Assicurati che l'immagine esista in questo percorso
+            style={{ width: 30, height: 30 }}
           />
+        </Marker>
         )}
 
         {/* Marker del user */}
@@ -200,6 +201,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "red",
     marginTop: 20,
+  },
+  iconContainer: {
+    alignItems: "center",
+  },
+  markerText: {
+    fontSize: 12,
+    color: "#000",
+    marginTop: 4,
+    textAlign: "center",
   },
 });
 
