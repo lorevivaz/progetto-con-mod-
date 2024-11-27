@@ -34,12 +34,13 @@ const { location } = route.params; // qui prendiamo la location passata come par
                 const existingOrder = await fetchOrder(parsedOrder.oid, sid);
     
                 if (existingOrder && existingOrder.status !== 'COMPLETED') {
-                    alert('Hai già un ordine attivo. Completa o cancella l’ordine esistente prima di effettuarne uno nuovo.');
+                    alert('Hai già un ordine attivo. Aspetta che l’ordine esistente arrivi.');
                     return;
                 } else if (existingOrder && existingOrder.status == 'COMPLETED') {
                     // Cancella l'ordine esistente
+                   
                     await AsyncStorage.removeItem('lastOrder');
-                }
+                } 
 
             }
     
@@ -54,7 +55,10 @@ const { location } = route.params; // qui prendiamo la location passata come par
             console.log("location :",  location)
             // Naviga alla schermata Order.js con l'ordine appena creato e la positione dell'utente 
 
-            navigation.navigate('Order');
+    
+
+            
+            navigation.navigate('Order', {menuDetails : menuDetails} ); // qui passiamo il menuDetails alla schermata Order.js
 
 
             alert('Acquisto completato con successo!');

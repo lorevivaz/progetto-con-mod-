@@ -5,7 +5,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchOrder } from "../viewmodel/HomeViewModel";
 import { Image } from "react-native";
 
-function Order({ navigation }) {
+function Order({ navigation , route }) {
+
+ // prendiamo il menuDetails passato come parametro dalla schermata MenuDetails.js
+    const menuDetails = route.params ? route.params.menuDetails : null;
+
   const [orderData, setOrderData] = useState();
 
   const [loading, setLoading] = useState(true);
@@ -162,6 +166,19 @@ function Order({ navigation }) {
             pinColor="red"
           />
         )}
+
+        {/* Marker del ristorante */}
+        {menuDetails.location?.lat && menuDetails.location?.lng && (
+          <Marker
+            coordinate={{
+              latitude: menuDetails.location.lat,
+              longitude: menuDetails.location.lng,
+            }}
+            title="ristorante"
+            pinColor="blue"
+          />
+        )}
+
       </MapView>
     </View>
   );
