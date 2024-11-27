@@ -90,7 +90,8 @@ export default function Home({ navigation }) {
     
             loadMenu();
         }
-    }, [sid, uid, location]);
+    }, [sid, uid ]);   
+
 
     const renderItem = ({ item }) => (
         <TouchableOpacity

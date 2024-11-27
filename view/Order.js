@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Alert, Button } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchOrder } from "../viewmodel/HomeViewModel";
 import { Image } from "react-native";
 
 function Order({ navigation }) {
-  const [orderData, setOrderData] = useState({
-    currentPosition: { lat: null, lng: null },
-  });
+  const [orderData, setOrderData] = useState();
 
   const [loading, setLoading] = useState(true);
 
@@ -81,12 +79,16 @@ function Order({ navigation }) {
     );
   }
 
-  if (!orderData ) {
+  if (!orderData || !droneLocation.lat || !droneLocation.lng) {
     return (
-      <View style={styles.container}>
+      <View style={styles.containerError}>
         <Text style={styles.errorText}>
-          Dettagli dell'ordine o posizione non disponibili.
+          non hai ancora effettuato un ordine.
         </Text>
+        <Button
+          title="vai a fare il tuo primo ordine"
+          onPress={() => navigation.navigate("Home")}
+        />
       </View>
     );
   }
@@ -142,7 +144,7 @@ function Order({ navigation }) {
           }}
         >
           <Image
-            source={require('../assets/icon-drone.png')} // Assicurati che l'immagine esista in questo percorso
+            source={require('../assets/icon-drone.png')} 
             style={{ width: 30, height: 30 }}
           />
         </Marker>
@@ -169,6 +171,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+    containerError: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        },
   card: {
     backgroundColor: "#fff",
     borderRadius: 8,

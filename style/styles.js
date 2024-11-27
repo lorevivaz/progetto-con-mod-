@@ -47,5 +47,14 @@ export default styles = StyleSheet.create(
             marginTop: 100,
             marginBottom: 50,
         },
+        errorInput: {
+            borderColor: 'red',
+            borderWidth: 1,
+        },
+        errorText: {
+            color: 'red',
+            fontSize: 12,
+            marginTop: 4,
+        },
     }
 );
