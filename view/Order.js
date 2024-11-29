@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, Alert, Button } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchOrder } from "../viewmodel/HomeViewModel";
+import { fetchOrder, fetchMenuDetails } from "../viewmodel/HomeViewModel";
 import { Image } from "react-native";
 
-function Order({ navigation , route }) {
+function Order({ navigation }) {
 
  // prendiamo il menuDetails passato come parametro dalla schermata MenuDetails.js
-    const menuDetails = route.params ? route.params.menuDetails : null;
-
+  
+const [menuDetails, setMenuDetails] = useState(null);
   const [orderData, setOrderData] = useState();
 
   const [loading, setLoading] = useState(true);
@@ -36,7 +36,11 @@ function Order({ navigation , route }) {
       } else {
         const parsedOrder = JSON.parse(lastOrder);
         const order = await fetchOrder(parsedOrder.oid, sid);
+        // faccio la chiamata fetchMenuDetails per recuperare i dettagli del menu
+        const menuDetails = await fetchMenuDetails(sid, parsedOrder.mid, order.deliveryLocation.lat, order.deliveryLocation.lng);
         setOrderData(order);
+        setMenuDetails(menuDetails);
+        
       }
     } catch (error) {
       console.error("Errore:", error);
@@ -104,27 +108,21 @@ function Order({ navigation , route }) {
         <Text style={styles.title}>Dettagli dell'Ordine</Text>
         <Text style={styles.label}>ID Ordine:</Text>
         <Text style={styles.value}>{orderData.oid}</Text>
+        <Text style={styles.label}>Menu:</Text>
+        <Text style={styles.value}>{menuDetails.name}</Text>
         <Text style={styles.label}>Stato:</Text>
         <Text style={styles.value}>{orderData.status}</Text>
         <Text style={styles.label}>Creazione:</Text>
+        <Text style={styles.value}>{new Date(orderData.creationTimestamp).toLocaleString()}</Text>
+        <Text style={styles.label}>{orderData.deliveryTimestamp ? 'Tempo di consegna:' : ""}</Text>
         <Text style={styles.value}>
-          {new Date(orderData.creationTimestamp).toLocaleString()}
-        </Text>
-        
-        <Text style={styles.label}>
-          {orderData.deliveryTimestamp
-            ? 'Tempo di consegna:'
-            :""}
-        </Text>
-
-        <Text style={styles.value}>
-          {orderData.deliveryTimestamp
-            ? new Date(orderData.deliveryTimestamp).toLocaleString()
-            : ""}
+            {orderData.deliveryTimestamp
+                ? new Date(orderData.deliveryTimestamp).toLocaleString()
+                : ""}
         </Text>
       </View>
-
-      {/* Mappa */}
+        
+        {/* Mappa con posizione del ristorante e del drone */}
       <MapView
         style={styles.map}
         initialCamera={{
@@ -140,7 +138,9 @@ function Order({ navigation , route }) {
       >
     
  {/* Marker del drone  */}
- {droneLocation?.lat && droneLocation.lng && (
+ {/* Marker del drone si vede solo se stautus è ONDelivery */}
+ 
+         {droneLocation?.lat && droneLocation.lng && (
           <Marker
           coordinate={{
             latitude: droneLocation.lat,
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-    containerError: {
+ containerError: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
@@ -224,7 +224,6 @@ const styles = StyleSheet.create({
   errorText: {
     textAlign: "center",
     color: "red",
-    marginTop: 20,
   },
   iconContainer: {
     alignItems: "center",

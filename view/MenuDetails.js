@@ -58,7 +58,7 @@ const { location } = route.params; // qui prendiamo la location passata come par
     
 
             
-            navigation.navigate('Order', {menuDetails : menuDetails} ); // qui passiamo il menuDetails alla schermata Order.js
+            navigation.navigate('Order' ); // qui passiamo il menuDetails alla schermata Order.js
 
 
             alert('Acquisto completato con successo!');
