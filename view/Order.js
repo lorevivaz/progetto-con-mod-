@@ -203,19 +203,22 @@ function Order({ navigation }) {
         }}
       >
         {/* Marker del drone */}
-        {droneLocation.lat && droneLocation.lng &&  orderData.status !== "COMPLETED" && (
-          <Marker
-            coordinate={{
-              latitude: droneLocation.lat,
-              longitude: droneLocation.lng,
-            }}
-          >
-            <Image
-              source={require("../assets/icon-drone.png")}
-              style={{ width: 30, height: 30 }}
-            />
-          </Marker>
-        )}
+        {droneLocation.lat &&
+          droneLocation.lng &&
+          orderData.status !== "COMPLETED" && (
+            <Marker
+              coordinate={{
+                latitude: droneLocation.lat,
+                longitude: droneLocation.lng,
+              }}
+              title="Posizione del drone"
+            >
+              <Image
+                source={require("../assets/icon-drone.png")}
+                style={{ width: 30, height: 30 }}
+              />
+            </Marker>
+          )}
 
         {/* Marker della consegna */}
         {orderData.deliveryLocation.lat && orderData.deliveryLocation.lng && (
@@ -225,8 +228,12 @@ function Order({ navigation }) {
               longitude: orderData.deliveryLocation.lng,
             }}
             title="Posizione di consegna"
-            pinColor="red"
-          />
+          >
+            <Image
+              source={require("../assets/icon-casa.png")}
+              style={{ width: 30, height: 30 }}
+            />
+          </Marker>
         )}
 
         {/* Marker del ristorante */}
@@ -237,8 +244,12 @@ function Order({ navigation }) {
               longitude: menuDetails.location.lng,
             }}
             title="Ristorante"
-            pinColor="blue"
-          />
+          >
+            <Image
+              source={require("../assets/icon-risto.png")}
+              style={{ width: 30, height: 30 }}
+            />
+          </Marker>
         )}
       </MapView>
     </View>
