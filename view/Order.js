@@ -1,86 +1,126 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ActivityIndicator,
   Alert,
-  Button,
+  Image,
+  TouchableOpacity,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchOrder, fetchMenuDetails } from "../viewmodel/HomeViewModel";
-import { Image } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 function Order({ navigation }) {
-  // prendiamo il menuDetails passato come parametro dalla schermata MenuDetails.js
-
   const [menuDetails, setMenuDetails] = useState(null);
-  const [orderData, setOrderData] = useState();
+  const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [droneLocation, setDroneLocation] = useState({ lat: null, lng: null });
   const [sid, setSid] = useState(null);
+  const [noOrder, setNoOrder] = useState(false);
 
+  // Recupera il SID al montaggio del componente
   useEffect(() => {
     AsyncStorage.getItem("user").then((user) => {
-      const parsedUser = JSON.parse(user);
-      const sid = parsedUser.sid;
-      setSid(sid);
+      if (user) {
+        const parsedUser = JSON.parse(user);
+        setSid(parsedUser.sid);
+      }
     });
   }, []);
 
-  async function loadOrderAndStartLocationTracking() {
+  // Funzione per caricare i dati iniziali
+  async function loadOrderData() {
+    setLoading(true);
+
+    if (!sid) {
+      setNoOrder(true);
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Recupera ordine
       const lastOrder = await AsyncStorage.getItem("lastOrder");
       if (!lastOrder) {
-        Alert.alert("Errore", "Nessun ordine trovato.");
-        navigation.navigate("Home");
+        setNoOrder(true);
         return;
-      } else {
-        const parsedOrder = JSON.parse(lastOrder);
-        const order = await fetchOrder(parsedOrder.oid, sid);
-        // faccio la chiamata fetchMenuDetails per recuperare i dettagli del menu
-        const menuDetails = await fetchMenuDetails(
-          sid,
-          parsedOrder.mid,
-          order.deliveryLocation.lat,
-          order.deliveryLocation.lng
-        );
-        setOrderData(order);
-        setMenuDetails(menuDetails);
       }
-    } catch (error) {
-      console.error("Errore:", error);
-      Alert.alert(
-        "Errore",
-        "Impossibile ottenere i dati dell'ordine o della posizione."
+
+      const parsedOrder = JSON.parse(lastOrder);
+      if (!parsedOrder || !parsedOrder.oid) {
+        setNoOrder(true);
+        return;
+      }
+
+      const order = await fetchOrder(parsedOrder.oid, sid);
+      const menuDetails = await fetchMenuDetails(
+        sid,
+        parsedOrder.mid,
+        order.deliveryLocation.lat,
+        order.deliveryLocation.lng
       );
+
+      setOrderData(order);
+      setMenuDetails(menuDetails);
+      setNoOrder(false);
+    } catch (error) {
+      console.error("Errore durante il caricamento dei dati:", error);
+      Alert.alert("Errore", "Impossibile ottenere i dati dell'ordine.");
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => {
-    if (sid) {
-      loadOrderAndStartLocationTracking();
-
-      const intervalId = setInterval(async () => {
+  // Funzione per avviare il tracking del drone
+  const startDroneTracking = () => {
+    return setInterval(async () => {
+      try {
         const lastOrder = await AsyncStorage.getItem("lastOrder");
-        const parsedOrder = JSON.parse(lastOrder);
+        if (!lastOrder) return;
 
-        const existingOrder = await fetchOrder(parsedOrder.oid, sid);
+        const parsedOrder = JSON.parse(lastOrder);
+        if (!parsedOrder || !parsedOrder.oid) return;
+
+        const updatedOrder = await fetchOrder(parsedOrder.oid, sid);
+
         setDroneLocation({
-          lat: existingOrder.currentPosition.lat,
-          lng: existingOrder.currentPosition.lng,
+          lat: updatedOrder.currentPosition.lat,
+          lng: updatedOrder.currentPosition.lng,
         });
-      }, 5000); // Intervallo di 5 secondi
+
+        setOrderData(updatedOrder);
+
+        if (updatedOrder.status === "COMPLETED") {
+          clearInterval(droneInterval);
+          Alert.alert(
+            "Ordine completato",
+            "Il tuo ordine è arrivato a destinazione."
+          );
+        }
+      } catch (error) {
+        console.error("Errore durante l'aggiornamento della posizione:", error);
+      }
+    }, 5000);
+  };
+
+  // Usa useFocusEffect per gestire i dati e il tracking
+  let droneInterval = null;
+
+  useFocusEffect(
+    useCallback(() => {
+      loadOrderData();
+
+      if (!noOrder) {
+        droneInterval = startDroneTracking();
+      }
 
       return () => {
-        clearInterval(intervalId);
+        if (droneInterval) clearInterval(droneInterval);
       };
-    }
-  }, [sid, droneLocation]);
+    }, [sid, noOrder])
+  );
 
   if (loading) {
     return (
@@ -90,16 +130,18 @@ function Order({ navigation }) {
     );
   }
 
-  if (!orderData || !droneLocation.lat || !droneLocation.lng) {
+  if (noOrder) {
     return (
       <View style={styles.containerError}>
         <Text style={styles.errorText}>
-          non hai ancora effettuato un ordine.
+          Non hai ancora effettuato un ordine. Effettua il tuo primo ordine!
         </Text>
-        <Button
-          title="vai a fare il tuo primo ordine"
+        <TouchableOpacity
           onPress={() => navigation.navigate("Home")}
-        />
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Vai alla Home</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -107,29 +149,47 @@ function Order({ navigation }) {
   return (
     <View style={styles.container}>
       {/* Card con dettagli dell'ordine */}
-      <View style={styles.card}>
-        <Text style={styles.title}>Dettagli dell'Ordine</Text>
-        <Text style={styles.label}>ID Ordine:</Text>
-        <Text style={styles.value}>{orderData.oid}</Text>
-        <Text style={styles.label}>Menu:</Text>
-        <Text style={styles.value}>{menuDetails.name}</Text>
-        <Text style={styles.label}>Stato:</Text>
-        <Text style={styles.value}>{orderData.status}</Text>
-        <Text style={styles.label}>Creazione:</Text>
-        <Text style={styles.value}>
-          {new Date(orderData.creationTimestamp).toLocaleString()}
-        </Text>
-        <Text style={styles.label}>
-          {orderData.deliveryTimestamp ? "Tempo di consegna:" : ""}
-        </Text>
-        <Text style={styles.value}>
-          {orderData.deliveryTimestamp
-            ? new Date(orderData.deliveryTimestamp).toLocaleString()
-            : ""}
-        </Text>
+      <View style={styles.cardContainer}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.title}>📦 Dettagli dell'Ordine</Text>
+        </View>
+        <View style={styles.cardContent}>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>ID Ordine:</Text>
+            <Text style={styles.value}>{orderData.oid}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>🍔 Menu:</Text>
+            <Text style={styles.value}>{menuDetails.name}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>📜 Stato:</Text>
+            <Text style={styles.value}>{orderData.status}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>⏰ Data di creazione:</Text>
+            <Text style={styles.value}>
+              {new Date(orderData.creationTimestamp).toLocaleString()}
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>
+              {orderData.deliveryTimestamp
+                ? "🚚 Data di consegna:"
+                : "📅 Arrivo previsto:"}
+            </Text>
+            <Text style={styles.value}>
+              {orderData.deliveryTimestamp
+                ? new Date(orderData.deliveryTimestamp).toLocaleString()
+                : new Date(
+                    orderData.expectedDeliveryTimestamp
+                  ).toLocaleString()}
+            </Text>
+          </View>
+        </View>
       </View>
 
-      {/* Mappa con posizione del ristorante e del drone */}
+      {/* Mappa */}
       <MapView
         style={styles.map}
         initialCamera={{
@@ -141,12 +201,9 @@ function Order({ navigation }) {
           heading: 200,
           zoom: 18,
         }}
-        showsMyLocationButton={true}
       >
-        {/* Marker del drone  */}
-        {/* Marker del drone si vede solo se stautus è ONDelivery */}
-
-        {droneLocation?.lat && droneLocation.lng && (
+        {/* Marker del drone */}
+        {droneLocation.lat && droneLocation.lng &&  orderData.status !== "COMPLETED" && (
           <Marker
             coordinate={{
               latitude: droneLocation.lat,
@@ -160,15 +217,14 @@ function Order({ navigation }) {
           </Marker>
         )}
 
-        {/* Marker del user */}
-
-        {orderData.deliveryLocation?.lat && orderData.deliveryLocation?.lng && (
+        {/* Marker della consegna */}
+        {orderData.deliveryLocation.lat && orderData.deliveryLocation.lng && (
           <Marker
             coordinate={{
               latitude: orderData.deliveryLocation.lat,
               longitude: orderData.deliveryLocation.lng,
             }}
-            title="posizione di consegna"
+            title="Posizione di consegna"
             pinColor="red"
           />
         )}
@@ -180,7 +236,7 @@ function Order({ navigation }) {
               latitude: menuDetails.location.lat,
               longitude: menuDetails.location.lng,
             }}
-            title="ristorante"
+            title="Ristorante"
             pinColor="blue"
           />
         )}
@@ -188,56 +244,87 @@ function Order({ navigation }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f5f5f5", // Sfondo chiaro per tutta la schermata
+  },
+  cardContainer: {
+    backgroundColor: "#ffffff", // Sfondo bianco per la card
+    borderRadius: 16, // Angoli arrotondati più pronunciati
+    marginHorizontal: 16,
+    marginTop: 20,
+    elevation: 6, // Ombra su Android
+    shadowColor: "#000", // Ombra su iOS
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    overflow: "hidden", // Per bordi arrotondati
+  },
+  cardHeader: {
+    backgroundColor: "#ff6f00", // Arancione vivace per il titolo
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomLeftRadius: 10, // Arrotondamento dei bordi inferiori
+    borderBottomRightRadius: 10,
+  },
+  title: {
+    color: "#fff", // Colore del testo del titolo
+    fontSize: 22,
+    fontWeight: "bold",
+    textAlign: "center",
+    textTransform: "uppercase", // Maiuscolo
+    letterSpacing: 1, // Spaziatura tra le lettere
+  },
+  cardContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    backgroundColor: "#f9f9f9", // Sfondo chiaro per il contenuto
+  },
+  infoRow: {
+    flexDirection: "row", // Disposizione orizzontale
+    justifyContent: "space-between", // Spazio tra etichetta e valore
+    alignItems: "center",
+    marginBottom: 12, // Spaziatura tra le righe
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#444", // Grigio per le etichette
+    flex: 1, // Per allineamento uniforme
+  },
+  value: {
+    fontSize: 16,
+    color: "#222", // Grigio scuro per i valori
+    flex: 2, // Più spazio per i valori
+    textAlign: "right",
+  },
+  map: {
+    flex: 1,
+    marginTop: 10, // Spaziatura tra la card e la mappa
+    borderRadius: 12, // Bordo arrotondato per la mappa
   },
   containerError: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  value: {
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  map: {
-    flex: 1,
-  },
   errorText: {
-    textAlign: "center",
+    fontSize: 18,
     color: "red",
-  },
-  iconContainer: {
-    alignItems: "center",
-  },
-  markerText: {
-    fontSize: 12,
-    color: "#000",
-    marginTop: 4,
+    marginBottom: 16,
     textAlign: "center",
+  },
+  button: {
+    backgroundColor: "#ff6f00",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
