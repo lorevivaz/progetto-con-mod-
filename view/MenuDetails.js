@@ -16,6 +16,7 @@ import {
 } from "../viewmodel/HomeViewModel";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SQLite from "expo-sqlite";
+import { isCardValid } from "../viewmodel/ProfileViewModel";
 
 export default function MenuDetails({ route, navigation }) {
   const { menu } = route.params; // qui prendiamo il menu passato come parametro dalla schermata precedente (Home.js)
@@ -29,6 +30,21 @@ export default function MenuDetails({ route, navigation }) {
     try {
       // Recupera l'ultimo ordine salvato
       const lastOrder = await AsyncStorage.getItem("lastOrder");
+
+      // Verifica la validità della carta
+      const user = await AsyncStorage.getItem("user");
+      const parsedUser = JSON.parse(user);
+      const sid = parsedUser.sid;
+      const uid = parsedUser.uid;
+
+      const cardValid = await isCardValid(sid, uid);
+      if (!cardValid) {
+        alert(
+          "Per favore, aggiorna i dettagli della tua carta prima di procedere con l'acquisto."
+        );
+        navigation.navigate("Profile");
+        return;
+      }
 
       if (lastOrder) {
         const parsedOrder = JSON.parse(lastOrder);

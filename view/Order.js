@@ -189,18 +189,28 @@ function Order({ navigation }) {
         </View>
       </View>
 
-      {/* Mappa */}
+      {/* Mappa con i marker per la consegna, il ristorante e il drone */}
       <MapView
         style={styles.map}
-        initialCamera={{
-          center: {
-            latitude: orderData.deliveryLocation.lat,
-            longitude: orderData.deliveryLocation.lng,
-          },
-          pitch: 50,
-          heading: 200,
-          zoom: 18,
+        initialRegion={{
+          latitude:
+            (orderData.deliveryLocation.lat + menuDetails.location.lat) / 2,
+          longitude:
+            (orderData.deliveryLocation.lng + menuDetails.location.lng) / 2,
+          latitudeDelta:
+            Math.abs(
+              orderData.deliveryLocation.lat - menuDetails.location.lat
+            ) * 2,
+          longitudeDelta:
+            Math.abs(
+              orderData.deliveryLocation.lng - menuDetails.location.lng
+            ) * 2,
         }}
+        showsPointsOfInterest={false}
+        showsBuildings={false}
+        showsIndoors={false}
+        showsCompass={false}
+        showsTraffic={false}
       >
         {/* Marker del drone */}
         {droneLocation.lat &&
