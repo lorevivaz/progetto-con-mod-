@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Alert, Button } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  Button,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchOrder, fetchMenuDetails } from "../viewmodel/HomeViewModel";
 import { Image } from "react-native";
 
 function Order({ navigation }) {
+  // prendiamo il menuDetails passato come parametro dalla schermata MenuDetails.js
 
- // prendiamo il menuDetails passato come parametro dalla schermata MenuDetails.js
-  
   const [menuDetails, setMenuDetails] = useState(null);
   const [orderData, setOrderData] = useState();
   const [loading, setLoading] = useState(true);
@@ -35,10 +41,14 @@ function Order({ navigation }) {
         const parsedOrder = JSON.parse(lastOrder);
         const order = await fetchOrder(parsedOrder.oid, sid);
         // faccio la chiamata fetchMenuDetails per recuperare i dettagli del menu
-        const menuDetails = await fetchMenuDetails(sid, parsedOrder.mid, order.deliveryLocation.lat, order.deliveryLocation.lng);
+        const menuDetails = await fetchMenuDetails(
+          sid,
+          parsedOrder.mid,
+          order.deliveryLocation.lat,
+          order.deliveryLocation.lng
+        );
         setOrderData(order);
         setMenuDetails(menuDetails);
-        
       }
     } catch (error) {
       console.error("Errore:", error);
@@ -53,8 +63,6 @@ function Order({ navigation }) {
 
   useEffect(() => {
     if (sid) {
-      let locationSubscription;
-
       loadOrderAndStartLocationTracking();
 
       const intervalId = setInterval(async () => {
@@ -69,9 +77,6 @@ function Order({ navigation }) {
       }, 5000); // Intervallo di 5 secondi
 
       return () => {
-        if (locationSubscription) {
-          locationSubscription.remove();
-        }
         clearInterval(intervalId);
       };
     }
@@ -111,16 +116,20 @@ function Order({ navigation }) {
         <Text style={styles.label}>Stato:</Text>
         <Text style={styles.value}>{orderData.status}</Text>
         <Text style={styles.label}>Creazione:</Text>
-        <Text style={styles.value}>{new Date(orderData.creationTimestamp).toLocaleString()}</Text>
-        <Text style={styles.label}>{orderData.deliveryTimestamp ? 'Tempo di consegna:' : ""}</Text>
         <Text style={styles.value}>
-            {orderData.deliveryTimestamp
-                ? new Date(orderData.deliveryTimestamp).toLocaleString()
-                : ""}
+          {new Date(orderData.creationTimestamp).toLocaleString()}
+        </Text>
+        <Text style={styles.label}>
+          {orderData.deliveryTimestamp ? "Tempo di consegna:" : ""}
+        </Text>
+        <Text style={styles.value}>
+          {orderData.deliveryTimestamp
+            ? new Date(orderData.deliveryTimestamp).toLocaleString()
+            : ""}
         </Text>
       </View>
-        
-        {/* Mappa con posizione del ristorante e del drone */}
+
+      {/* Mappa con posizione del ristorante e del drone */}
       <MapView
         style={styles.map}
         initialCamera={{
@@ -134,22 +143,21 @@ function Order({ navigation }) {
         }}
         showsMyLocationButton={true}
       >
-    
- {/* Marker del drone  */}
- {/* Marker del drone si vede solo se stautus è ONDelivery */}
- 
-         {droneLocation?.lat && droneLocation.lng && (
+        {/* Marker del drone  */}
+        {/* Marker del drone si vede solo se stautus è ONDelivery */}
+
+        {droneLocation?.lat && droneLocation.lng && (
           <Marker
-          coordinate={{
-            latitude: droneLocation.lat,
-            longitude: droneLocation.lng,
-          }}
-        >
-          <Image
-            source={require('../assets/icon-drone.png')} 
-            style={{ width: 30, height: 30 }}
-          />
-        </Marker>
+            coordinate={{
+              latitude: droneLocation.lat,
+              longitude: droneLocation.lng,
+            }}
+          >
+            <Image
+              source={require("../assets/icon-drone.png")}
+              style={{ width: 30, height: 30 }}
+            />
+          </Marker>
         )}
 
         {/* Marker del user */}
@@ -176,8 +184,7 @@ function Order({ navigation }) {
             pinColor="blue"
           />
         )}
-
-    </MapView>
+      </MapView>
     </View>
   );
 }
@@ -186,11 +193,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
- containerError: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        },
+  containerError: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   card: {
     backgroundColor: "#fff",
     borderRadius: 8,
