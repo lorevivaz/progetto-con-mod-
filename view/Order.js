@@ -9,11 +9,9 @@ function Order({ navigation }) {
 
  // prendiamo il menuDetails passato come parametro dalla schermata MenuDetails.js
   
-const [menuDetails, setMenuDetails] = useState(null);
+  const [menuDetails, setMenuDetails] = useState(null);
   const [orderData, setOrderData] = useState();
-
   const [loading, setLoading] = useState(true);
-
   const [droneLocation, setDroneLocation] = useState({ lat: null, lng: null });
   const [sid, setSid] = useState(null);
 
@@ -179,7 +177,7 @@ const [menuDetails, setMenuDetails] = useState(null);
           />
         )}
 
-      </MapView>
+    </MapView>
     </View>
   );
 }
