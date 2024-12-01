@@ -269,6 +269,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5", // Sfondo chiaro per tutta la schermata
+    marginTop: 30,
   },
   cardContainer: {
     backgroundColor: "#ffffff", // Sfondo bianco per la card

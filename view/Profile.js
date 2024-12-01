@@ -85,17 +85,20 @@ export default function ProfileScreen() {
         />
       ) : (
         <View style={styles.view}>
-          <FlatList
-            //flat list la vede come una scrollview. implementare un altro modo per mostrare i dati nel profilo!
-            data={data}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.item}>
-                <Text style={styles.label}>{item.label}:</Text>
-                <Text style={styles.value}>{item.value}</Text>
-              </View>
-            )}
-          />
+          <View style={styles.row}>
+            <View style={styles.item}>
+              <Text style={styles.label}>First Name:</Text>
+              <Text style={styles.value}>{user.firstName}</Text>
+            </View>
+            <View style={styles.item}>
+              <Text style={styles.label}>Last Name:</Text>
+              <Text style={styles.value}>{user.lastName}</Text>
+            </View>
+          </View>
+          <View style={[styles.item, styles.fullWidthItem]}>
+            <Text style={styles.label}>Card Full Name:</Text>
+            <Text style={styles.value}>{user.cardFullName}</Text>
+          </View>
 
           <TouchableOpacity
             style={styles.bottone}
