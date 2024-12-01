@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export default styles = StyleSheet.create({
+const styles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
     justifyContent: "center",
@@ -12,10 +12,29 @@ export default styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#f0f0f0",
   },
+  view: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginTop: 50,
+    marginBottom: 0,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
   label: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
-    marginVertical: 8,
+    marginBottom: 15, // Spazio extra tra i label
+    marginTop: 5, // Spazio aggiuntivo sopra
+    color: "#444",
+  },
+  cardFullNameLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginVertical: 6,
     color: "#444",
   },
   input: {
@@ -28,13 +47,20 @@ export default styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: "#f9f9f9",
   },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 360, // Ampio spazio sopra i pulsanti
+    marginBottom: 10,
+  },
   bottone: {
     backgroundColor: "#ff6347",
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 25,
     alignItems: "center",
-    marginTop: 340,
-    alignSelf: "center",
+    marginHorizontal: 10, // Spazio tra i pulsanti
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -45,13 +71,6 @@ export default styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
-  },
-  view: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 50,
-    marginBottom: 30,
   },
   errorInput: {
     borderColor: "red",
@@ -84,9 +103,6 @@ export default styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 10,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
 });
+
+export default styles;

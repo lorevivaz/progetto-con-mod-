@@ -12,7 +12,7 @@ import ProfileForm from "./ProfileForm";
 
 import { fetchData, updateUserData } from "../viewmodel/ProfileViewModel";
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }) {
   const [sid, setSid] = useState(null);
   const [uid, setUid] = useState(null);
 
@@ -96,16 +96,24 @@ export default function ProfileScreen() {
             </View>
           </View>
           <View style={[styles.item, styles.fullWidthItem]}>
-            <Text style={styles.label}>Card Full Name:</Text>
+            <Text style={styles.cardFullNameLabel}>Card Full Name:</Text>
             <Text style={styles.value}>{user.cardFullName}</Text>
           </View>
 
-          <TouchableOpacity
-            style={styles.bottone}
-            onPress={() => setIsEditing(true)}
-          >
-            <Text style={styles.bottoneTesto}>Modifica Profilo</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={styles.bottone}
+              onPress={() => setIsEditing(true)}
+            >
+              <Text style={styles.bottoneTesto}>Modifica Profilo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.bottone}
+              onPress={() => navigation.navigate("Order")}
+            >
+              <Text style={styles.bottoneTesto}>Vai a Ordine</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </View>
