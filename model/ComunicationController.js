@@ -2,8 +2,6 @@ class CommunicationController {
   static BASE_URL = "https://develop.ewlab.di.unimi.it/mc/2425/";
 
   //posizione hardcoded, da implementare con la posizione reale
-  //static lat = 45.4642;
-  //  static lng = 9.19;
 
   static async genericRequest(endpoint, verb, queryParams, bodyParams) {
     const queryParamsFormatted = new URLSearchParams(queryParams).toString();
