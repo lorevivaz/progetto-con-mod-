@@ -98,29 +98,34 @@ export default function ProfileForm({ route, navigation }) {
           )}
         </View>
 
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>
-            <Ionicons name="calendar-outline" size={16} /> Scadenza Carta Mesi 
-          </Text>
-          <TextInput
-            style={styles.input}
-            value={"" + formUser.cardExpireMonth}
-            onChangeText={(text) => handleChange("cardExpireMonth", text)}
-            placeholder="Mese"
-          />
-        </View>
+        <View style={styles.rowContainer}>
+          <View style={styles.halfFieldContainer}>
+            <Text style={styles.label}>
+              <Ionicons name="calendar-outline" size={16} /> Mese
+            </Text>
+            <TextInput
+              style={styles.input}
+              value={"" + formUser.cardExpireMonth}
+              onChangeText={(text) => handleChange("cardExpireMonth", text)}
+              placeholder="MM"
+              keyboardType="numeric"
+              maxLength={2}
+            />
+          </View>
 
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>
-            <Ionicons name="calendar-outline" size={16} /> Scadenza Carta Anno 
-          </Text>
-
-          <TextInput
-            style={styles.input}
-            value={"" + formUser.cardExpireYear}
-            onChangeText={(text) => handleChange("cardExpireYear", text)}
-            placeholder="Anno"
-          />
+          <View style={styles.halfFieldContainer}>
+            <Text style={styles.label}>
+              <Ionicons name="calendar-outline" size={16} /> Anno
+            </Text>
+            <TextInput
+              style={styles.input}
+              value={"" + formUser.cardExpireYear}
+              onChangeText={(text) => handleChange("cardExpireYear", text)}
+              placeholder="YYYY"
+              keyboardType="numeric"
+              maxLength={4}
+            />
+          </View>
         </View>
 
         <View style={styles.fieldContainer}>

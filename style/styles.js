@@ -79,7 +79,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: -10,
     marginBottom: 10,
-  }
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  
+  halfFieldContainer: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
 });
 
 export default styles;
