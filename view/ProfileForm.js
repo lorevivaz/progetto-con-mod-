@@ -46,7 +46,7 @@ export default function ProfileForm({ route, navigation }) {
 
   return (
     <View style={styles.profileCard}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false} >
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>
             <Ionicons name="person-outline" size={16} /> Nome
