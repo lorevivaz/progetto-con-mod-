@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import { Text, TextInput, View, ScrollView, Alert, TouchableOpacity } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
+import {
+  Text,
+  TextInput,
+  View,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import styles from "../style/styles";
 
 export default function ProfileForm({ route, navigation }) {
@@ -24,7 +31,7 @@ export default function ProfileForm({ route, navigation }) {
   };
 
   const handleChange = (field, value) => {
-    setFormUser(prev => ({ ...prev, [field]: value }));
+    setFormUser((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
@@ -86,22 +93,31 @@ export default function ProfileForm({ route, navigation }) {
             onChangeText={(text) => handleChange("cardNumber", text)}
             placeholder="Inserisci il numero della carta"
           />
-          {errors.cardNumber && <Text style={styles.error}>{errors.cardNumber}</Text>}
+          {errors.cardNumber && (
+            <Text style={styles.error}>{errors.cardNumber}</Text>
+          )}
         </View>
 
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>
-            <Ionicons name="calendar-outline" size={16} /> Scadenza Carta
+            <Ionicons name="calendar-outline" size={16} /> Scadenza Carta Mesi 
           </Text>
           <TextInput
             style={styles.input}
-            value={""+ formUser.cardExpireMonth}
+            value={"" + formUser.cardExpireMonth}
             onChangeText={(text) => handleChange("cardExpireMonth", text)}
             placeholder="Mese"
           />
+        </View>
+
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>
+            <Ionicons name="calendar-outline" size={16} /> Scadenza Carta Anno 
+          </Text>
+
           <TextInput
             style={styles.input}
-            value={""+ formUser.cardExpireYear}
+            value={"" + formUser.cardExpireYear}
             onChangeText={(text) => handleChange("cardExpireYear", text)}
             placeholder="Anno"
           />
@@ -117,25 +133,21 @@ export default function ProfileForm({ route, navigation }) {
             onChangeText={(text) => handleChange("cardCVV", text)}
             placeholder="Inserisci il CVV"
             secureTextEntry
-                        />
+          />
           {errors.cardCVV && <Text style={styles.error}>{errors.cardCVV}</Text>}
         </View>
 
         <Text style={styles.error}>{errors.general}</Text>
-        
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={[styles.button, { backgroundColor: '#666' }]}
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#666" }]}
             onPress={() => navigation.goBack()}
           >
             <Text style={styles.buttonText}>Annulla</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={handleSave}
-          >
+
+          <TouchableOpacity style={styles.button} onPress={handleSave}>
             <Text style={styles.buttonText}>Salva</Text>
           </TouchableOpacity>
         </View>
