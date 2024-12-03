@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, SafeAreaView, ScrollView } from "react-na
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "../style/styles";
-import ProfileForm from "./ProfileForm";
 import { Ionicons } from '@expo/vector-icons';
 import { fetchData, updateUserData } from "../viewmodel/ProfileViewModel";
 
@@ -18,7 +17,6 @@ export default function ProfileScreen({ navigation }) {
     cardExpireYear: "",
     cardCVV: "",
   });
-  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     AsyncStorage.getItem("user").then((user) => {
@@ -46,14 +44,10 @@ export default function ProfileScreen({ navigation }) {
     }
   }, [sid, uid]);
 
-  const handleInputChange = (field, value) => {
-    setUser(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSave = async () => {
+  const handleSave = async (updatedUser) => {
     try {
-      await updateUserData(sid, uid, user);
-      setIsEditing(false);
+      await updateUserData(sid, uid, updatedUser);
+      setUser(updatedUser);
     } catch (error) {
       console.error("Failed to update user data:", error);
     }
@@ -63,52 +57,47 @@ export default function ProfileScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <Text style={styles.headerText}>Profilo Utente</Text>
-        {isEditing ? (
-          <ProfileForm
-            user={user}
-            onInputChange={handleInputChange}
-            onSave={handleSave}
-          />
-        ) : (
-          <View style={styles.profileCard}>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>
-                <Ionicons name="person-outline" size={16} /> Nome
-              </Text>
-              <Text style={styles.value}>{user.firstName}</Text>
-            </View>
-            
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>
-                <Ionicons name="people-outline" size={16} /> Cognome
-              </Text>
-              <Text style={styles.value}>{user.lastName}</Text>
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>
-                <Ionicons name="card-outline" size={16} /> Intestatario Carta
-              </Text>
-              <Text style={styles.value}>{user.cardFullName}</Text>
-            </View>
-
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity 
-                style={styles.button}
-                onPress={() => setIsEditing(true)}
-              >
-                <Text style={styles.buttonText}>Modifica</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.button, { backgroundColor: '#34a853' }]}
-                onPress={() => navigation.navigate("Order")}
-              >
-                <Text style={styles.buttonText}>Ordini</Text>
-              </TouchableOpacity>
-            </View>
+        <View style={styles.profileCard}>
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>
+              <Ionicons name="person-outline" size={16} /> Nome
+            </Text>
+            <Text style={styles.value}>{user.firstName}</Text>
           </View>
-        )}
+          
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>
+              <Ionicons name="people-outline" size={16} /> Cognome
+            </Text>
+            <Text style={styles.value}>{user.lastName}</Text>
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>
+              <Ionicons name="card-outline" size={16} /> Intestatario Carta
+            </Text>
+            <Text style={styles.value}>{user.cardFullName}</Text>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              style={styles.button}
+              onPress={() => navigation.navigate('ProfileForm', {
+                user: user,
+                onSave: handleSave
+              })}
+            >
+              <Text style={styles.buttonText}>Modifica</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.button, { backgroundColor: '#34a853' }]}
+              onPress={() => navigation.navigate("Order")}
+            >
+              <Text style={styles.buttonText}>Ordini</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
