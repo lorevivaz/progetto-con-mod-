@@ -1459,7 +1459,7 @@
   dependencies:
     cross-spawn "^7.0.3"
 
-"@expo/vector-icons@^14.0.0":
+"@expo/vector-icons@^14.0.0", "@expo/vector-icons@^14.0.2":
   version "14.0.4"
   resolved "https://registry.npmjs.org/@expo/vector-icons/-/vector-icons-14.0.4.tgz"
   integrity sha512-+yKshcbpDfbV4zoXOgHxCwh7lkE9VVTT5T03OUlBsqfze1PLy6Hi4jp1vSb1GVbY6eskvMIivGVc9SKzIv0oEQ==
@@ -4874,6 +4874,11 @@ postcss@~8.4.32:
     picocolors "^1.1.1"
     source-map-js "^1.2.1"
 
+prettier@3.4.1:
+  version "3.4.1"
+  resolved "https://registry.npmjs.org/prettier/-/prettier-3.4.1.tgz"
+  integrity sha512-G+YdqtITVZmOJje6QkXQWzl3fSfMxFwm1tjTyo9exhkmWSqC4Yhd1+lug++IlR2mvRVAxEDDWYkQdeSztajqgg==
+
 pretty-bytes@^5.6.0:
   version "5.6.0"
   resolved "https://registry.npmjs.org/pretty-bytes/-/pretty-bytes-5.6.0.tgz"
@@ -5017,7 +5022,7 @@ react-is@^18.0.0, react-is@^18.2.0:
   resolved "https://registry.npmjs.org/react-is/-/react-is-18.3.1.tgz"
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
 
-"react-native-gesture-handler@>= 2.0.0":
+react-native-gesture-handler@^2.21.2, "react-native-gesture-handler@>= 2.0.0":
   version "2.21.2"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.21.2.tgz"
   integrity sha512-HcwB225K9aeZ8e/B8nFzEh+2T4EPWTeamO1l/y3PcQ9cyCDYO2zja/G31ITpYRIqkip7XzGs6wI/gnHOQn1LDQ==

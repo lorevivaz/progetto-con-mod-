@@ -55,7 +55,7 @@ export default function Navigation() {
           component={Order}
           options={{ headerShown: false }}
         />
-        <Tab.Screen name="Profile" component={Profile} />
+        <Tab.Screen name="Profile" component={Profile}  options={{ headerShown: false }} />
       </Tab.Navigator>
     </NavigationContainer>
   );
