@@ -29,7 +29,7 @@ export default function App() {
           //await dbSetUp(JSON.stringify(userData));
           setLoading(false);
         }
-      }, 2000); // 5000 milliseconds = 5 seconds
+      }, 3000); // 5000 milliseconds = 5 seconds
     } catch (error) {
       console.error("useRegister Errors: " + error);
       setLoading(false);
@@ -45,7 +45,7 @@ export default function App() {
       {loading ? (
         <View style={styles.container}>
           <Image
-            source={require("./load-icon/cut-loop.gif")}
+            source={require("./load-icon/cer.gif")}
             style={styles.logo}
           />
         </View>

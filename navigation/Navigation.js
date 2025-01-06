@@ -62,9 +62,9 @@ export default function Navigation() {
             let iconName;
             if (route.name === "Home") {
               iconName = "home-outline";
-            } else if (route.name === "Order") {
+            } else if (route.name === "Ordini") {
               iconName = "fast-food-outline";
-            } else if (route.name === "Profile") {
+            } else if (route.name === "Profilo") {
               iconName = "person-outline";
             }
             return <Icon name={iconName} size={size} color={color} />;
@@ -77,12 +77,12 @@ export default function Navigation() {
           options={{ headerShown: false }}
         />
         <Tab.Screen 
-          name="Order" 
+          name="Ordini"
           component={Order} 
           options={{ headerShown: false }}
         />
         <Tab.Screen 
-          name="Profile" 
+          name="Profilo" 
           component={ProfileStackScreen}
           options={{ headerShown: false }} 
         />

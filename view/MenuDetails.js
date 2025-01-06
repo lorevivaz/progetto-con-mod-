@@ -42,7 +42,7 @@ export default function MenuDetails({ route, navigation }) {
         alert(
           "Per favore, aggiorna i dettagli della tua carta prima di procedere con l'acquisto."
         );
-        navigation.navigate("Profile");
+        navigation.navigate("Profilo");
         return;
       }
 
@@ -82,7 +82,7 @@ export default function MenuDetails({ route, navigation }) {
       console.log("Location:", location);
 
       // Naviga alla schermata Order.js
-      navigation.navigate("Order", { order: response });
+      navigation.navigate("Ordini", { order: response });
 
       alert("Acquisto completato con successo!");
     } catch (error) {
@@ -95,7 +95,6 @@ export default function MenuDetails({ route, navigation }) {
     async function loadMenuDetails() {
       try {
         console.log(
-          "la pisiozqwknvbiuvbvireiw:",
           location.latitude,
           location.longitude
         );
@@ -165,15 +164,15 @@ export default function MenuDetails({ route, navigation }) {
         <Image source={{ uri: menuImage }} style={styles.menuImage} />
       )}
       <View style={styles.infoContainer}>
-        <Text style={styles.menuPrice}>Price: {menuDetails.price}€</Text>
+        <Text style={styles.menuPrice}>Prezzo: {menuDetails.price}€</Text>
 
         <Text style={styles.menuDelivery}>
           {" "}
-          Delivery Time: {menuDetails.deliveryTime} min
+          tempo di consegna: {menuDetails.deliveryTime} min
         </Text>
 
         <Text style={styles.menuLocation}>
-          Location: Lat {menuDetails.location.lat}, Lng{" "}
+          Posizione : Lat {menuDetails.location.lat}, Lng{" "}
           {menuDetails.location.lng}
         </Text>
       </View>
@@ -186,7 +185,7 @@ export default function MenuDetails({ route, navigation }) {
 
       {/* Pulsante Acquista Ora che se cliccato fa la fetchbuy  e mi porta alla pagina order con la mappa */}
       <TouchableOpacity style={styles.buyButton} onPress={handleBuyNow}>
-        <Text style={styles.buyButtonText}>Buy Now</Text>
+        <Text style={styles.buyButtonText}>Acquista ora</Text>
       </TouchableOpacity>
     </ScrollView>
   );

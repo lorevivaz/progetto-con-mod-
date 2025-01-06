@@ -121,12 +121,12 @@ export default function Home({ navigation }) {
       <View style={styles.cardContent}>
         <Text style={styles.menuName}>{item.name}</Text>
         <Text style={styles.menuDescription}>{item.shortDescription}</Text>
-        <Text style={styles.menuPrice}>Price: {item.price}€</Text>
+        <Text style={styles.menuPrice}>Prezzo: {item.price}€</Text>
         <Text style={styles.menuDelivery}>
-          Delivery Time: {item.deliveryTime} min
+          tempo di consegna: {item.deliveryTime} min
         </Text>
         <Text style={styles.menuLocation}>
-          Location: {item.location.lat}, {item.location.lng}
+          Posizione: {item.location.lat}, {item.location.lng}
         </Text>
       </View>
     </TouchableOpacity>
