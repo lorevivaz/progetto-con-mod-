@@ -102,7 +102,7 @@ export default function ProfileScreen({navigation}) {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Text style={styles.headerText}>Profilo Utente</Text>
             <View style={styles.profileCard}>
                 <View style={styles.fieldContainer}>
@@ -171,6 +171,6 @@ export default function ProfileScreen({navigation}) {
                     </View>
                 </View>
             )}
-        </SafeAreaView>
+        </View>
     );
 }
