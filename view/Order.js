@@ -275,7 +275,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff", // Sfondo bianco per la card
     borderRadius: 16, // Angoli arrotondati più pronunciati
     marginHorizontal: 16,
-    marginTop: 20,
     elevation: 6, // Ombra su Android
     shadowColor: "#000", // Ombra su iOS
     shadowOffset: { width: 0, height: 4 },
@@ -285,7 +284,7 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     backgroundColor: "#ff6f00", // Arancione vivace per il titolo
-    paddingVertical: 14,
+    paddingVertical: 10,
     paddingHorizontal: 16,
     borderBottomLeftRadius: 10, // Arrotondamento dei bordi inferiori
     borderBottomRightRadius: 10,

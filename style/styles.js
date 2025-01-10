@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1a73e8",
+    color: "#ff6f00",
     marginBottom: 20,
     textAlign: "center",
   },
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    backgroundColor: "#1a73e8",
+    backgroundColor: "#ff6f00",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 25,

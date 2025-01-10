@@ -103,7 +103,6 @@ export default function ProfileScreen({navigation}) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.headerText}>Profilo Utente</Text>
             <View style={styles.profileCard}>
                 <View style={styles.fieldContainer}>
                     <Text style={styles.label}>
@@ -135,13 +134,6 @@ export default function ProfileScreen({navigation}) {
                         })}
                     >
                         <Text style={styles.buttonText}>Modifica</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={[styles.button, { backgroundColor: '#34a853' }]}
-                        onPress={() => navigation.navigate("Ordini")}
-                    >
-                        <Text style={styles.buttonText}>Ordini</Text>
                     </TouchableOpacity>
                 </View>
             </View>

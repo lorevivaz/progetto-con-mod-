@@ -1,14 +1,16 @@
-import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
-import Icon from "react-native-vector-icons/Ionicons";
+import * as React from 'react';
 
-import Order from "../view/Order";
-import Home from "../view/Home";
-import Profile from "../view/Profile";
-import MenuDetails from "../view/MenuDetails";
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+import Order from '../view/Order';
+import Home from '../view/Home';
+import Profile from '../view/Profile';
+import MenuDetails from '../view/MenuDetails';
 import ProfileForm from "../view/ProfileForm";
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -17,10 +19,7 @@ const ProfileStack = createStackNavigator();
 function HomeStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen 
-        name="Home" 
-        component={Home}
-      />
+      <Stack.Screen name="Home" component={Home} />
       <Stack.Screen 
         name="MenuDetails" 
         component={MenuDetails}
@@ -37,15 +36,19 @@ function ProfileStackScreen() {
   return (
     <ProfileStack.Navigator>
       <ProfileStack.Screen 
-        name="ProfileMain" 
+        name="Profile" 
         component={Profile}
-        options={{ headerShown: false }} 
+        options = {{
+          headerTitle: "Profilo",
+        }}
+         
       />
       <ProfileStack.Screen 
         name="ProfileForm" 
         component={ProfileForm}
         options={{
-          headerBackTitle: "Indietro"
+          headerBackTitle: "Indietro",
+          headerTitle: "Modifica Profilo",
         }}
       />
     </ProfileStack.Navigator>
@@ -60,33 +63,40 @@ export default function Navigation() {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
             let iconName;
-            if (route.name === "Home") {
-              iconName = "home-outline";
-            } else if (route.name === "Ordini") {
-              iconName = "fast-food-outline";
-            } else if (route.name === "Profilo") {
-              iconName = "person-outline";
+
+            if (route.name === 'Home') {
+              iconName = 'home-outline';
+            } else if (route.name === 'Ordini') {
+              iconName = 'fast-food-outline';
+            } else if (route.name === 'Profilo') {
+              iconName = 'person-outline';
             }
+
+            // Restituisce l'icona corrispondente
             return <Icon name={iconName} size={size} color={color} />;
           },
         })}
       >
-        <Tab.Screen 
-          name="Home" 
-          component={HomeStack} 
+        <Tab.Screen
+          name="Home"
+          component={HomeStack}
           options={{ headerShown: false }}
         />
         <Tab.Screen 
-          name="Ordini"
+          name="Ordini" 
           component={Order} 
-          options={{ headerShown: false }}
+          options={{ headerShown: true }} 
         />
         <Tab.Screen 
           name="Profilo" 
           component={ProfileStackScreen}
           options={{ headerShown: false }} 
         />
+
       </Tab.Navigator>
+
+
+
     </NavigationContainer>
   );
 }
