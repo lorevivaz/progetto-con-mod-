@@ -77,23 +77,24 @@ function Order({ navigation }) {
   const startDroneTracking = () => {
     return setInterval(async () => {
       try {
+        // recupero lastOrder da AsyncStorage per poi prenderne l'oid
         const lastOrder = await AsyncStorage.getItem("lastOrder");
         if (!lastOrder) return;
 
-        const parsedOrder = JSON.parse(lastOrder);
+        const parsedOrder = JSON.parse(lastOrder); // parsing dell'ordine in JSON
         if (!parsedOrder || !parsedOrder.oid) return;
 
-        const updatedOrder = await fetchOrder(parsedOrder.oid, sid);
+        const updatedOrder = await fetchOrder(parsedOrder.oid, sid); // recupero l'ordine aggiornato dal server
 
         setDroneLocation({
           lat: updatedOrder.currentPosition.lat,
           lng: updatedOrder.currentPosition.lng,
         });
 
-        setOrderData(updatedOrder);
+        setOrderData(updatedOrder); // aggiorno i dati dell'ordine
 
         if (updatedOrder.status === "COMPLETED") {
-          clearInterval(droneInterval);
+          clearInterval(droneInterval); // interrompo il tracking del drone
           Alert.alert(
             "Ordine completato",
             "Il tuo ordine è arrivato a destinazione."
@@ -105,19 +106,20 @@ function Order({ navigation }) {
     }, 5000);
   };
 
-  // Usa useFocusEffect per gestire i dati e il tracking
+  // Usa useFocusEffect per gestire i dati e il tracking, uso la callback per evitare dipendenze inutili
   let droneInterval = null;
+
 
   useFocusEffect(
     useCallback(() => {
-      loadOrderData();
+      loadOrderData(); // richiamo la funxione asincrona per caricare i dati
 
       if (!noOrder) {
-        droneInterval = startDroneTracking();
+        droneInterval = startDroneTracking(); // avvio il tracking del drone se l'ordine esiste
       }
 
       return () => {
-        if (droneInterval) clearInterval(droneInterval);
+        if (droneInterval) clearInterval(droneInterval); // qui interrompo il tracking del drone se l'utente esce dalla schermata
       };
     }, [sid, noOrder])
   );
@@ -125,11 +127,12 @@ function Order({ navigation }) {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#ff6f00" />
       </View>
     );
   }
 
+  // se non ci sono ordini, mostro questa schermata 
   if (noOrder) {
     return (
       <View style={styles.containerError}>

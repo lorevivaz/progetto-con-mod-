@@ -94,10 +94,7 @@ export default function MenuDetails({ route, navigation }) {
   useEffect(() => {
     async function loadMenuDetails() {
       try {
-        console.log(
-          location.latitude,
-          location.longitude
-        );
+        console.log(location.latitude, location.longitude);
 
         const db = await SQLite.openDatabaseSync("MangiaBasta");
 
@@ -156,7 +153,6 @@ export default function MenuDetails({ route, navigation }) {
     );
   }
 
-  // il deliverytime lo recuperiamo dal menu passato come parametro
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.menuName}>{menuDetails.name}</Text>
@@ -194,7 +190,7 @@ export default function MenuDetails({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f5f5f5", // colore di sfondo chiaro
     padding: 16,
   },
   loaderContainer: {
@@ -235,7 +231,7 @@ const styles = StyleSheet.create({
   menuPrice: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#ff6347",
+    color: "#ff6f00",
     marginBottom: 8,
   },
   menuDelivery: {
@@ -264,7 +260,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   buyButton: {
-    backgroundColor: "#ff6347",
+    backgroundColor: "#ff6f00",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 30,

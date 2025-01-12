@@ -11,17 +11,31 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "../style/styles";
 
 export default function ProfileForm({ route, navigation }) {
-  const { user, onSave } = route.params;
+  const { user, onSave } = route.params; // qui prendiamo l'utente passato come parametro dalla schermata precedente (Profile.js) e la funzione onSave per salvare i dati
   const [formUser, setFormUser] = useState(user);
   const [errors, setErrors] = useState({});
 
   const validateInputs = () => {
     const newErrors = {};
 
+    //controllo se i campi del nome, cognome e intestatario carta sono vuoti
+    if (!formUser.firstName) {
+      newErrors.firstName = "Il nome è obbligatorio";
+    }
+
+    if (!formUser.lastName) {
+      newErrors.lastName = "Il cognome è obbligatorio";
+    }
+
+    if (!formUser.cardFullName) {
+      newErrors.cardFullName = "L'intestatario della carta è obbligatorio";
+    }
+
+    // controllo se il numero della carta è composto da 16 cifre
     if (!/^\d{16}$/.test(formUser.cardNumber)) {
       newErrors.cardNumber = "Il numero della carta deve contenere 16 cifre";
     }
-
+    // controllo se il CVV è composto da 3 cifre e inizia con 1
     if (!/^1\d{2}$/.test(formUser.cardCVV)) {
       newErrors.cardCVV = 'Il CVV deve contenere 3 cifre e iniziare con "1"';
     }
@@ -46,7 +60,7 @@ export default function ProfileForm({ route, navigation }) {
 
   return (
     <View style={styles.profileCard}>
-      <ScrollView showsVerticalScrollIndicator={false} >
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>
             <Ionicons name="person-outline" size={16} /> Nome
@@ -57,6 +71,9 @@ export default function ProfileForm({ route, navigation }) {
             onChangeText={(text) => handleChange("firstName", text)}
             placeholder="Inserisci il nome"
           />
+          {errors.firstName && (
+            <Text style={styles.error}>{errors.firstName}</Text>
+          )}
         </View>
 
         <View style={styles.fieldContainer}>
@@ -69,6 +86,9 @@ export default function ProfileForm({ route, navigation }) {
             onChangeText={(text) => handleChange("lastName", text)}
             placeholder="Inserisci il cognome"
           />
+          {errors.lastName && (
+            <Text style={styles.error}>{errors.lastName}</Text>
+          )}
         </View>
 
         <View style={styles.fieldContainer}>
@@ -81,6 +101,9 @@ export default function ProfileForm({ route, navigation }) {
             onChangeText={(text) => handleChange("cardFullName", text)}
             placeholder="Inserisci l'intestatario della carta"
           />
+          {errors.cardFullName && (
+            <Text style={styles.error}>{errors.cardFullName}</Text>
+          )}
         </View>
 
         <View style={styles.fieldContainer}>
