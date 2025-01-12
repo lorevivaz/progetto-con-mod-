@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navigation from "./navigation/Navigation";
 import CommunicationController from "./model/ComunicationController";
-import { StyleSheet, Image, View } from "react-native";
+import { StyleSheet, ActivityIndicator, View, Text } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -43,11 +43,11 @@ export default function App() {
   return (
     <>
       {loading ? (
-        <View style={styles.container}>
-          <Image
-            source={require("./load-icon/cer.gif")}
-            style={styles.logo}
-          />
+        <View style={styles.loaderContainer}>
+          <View style={styles.scaledIndicator}>
+            <ActivityIndicator size="large" color="#ff6f00" />
+          </View>
+          <Text style={styles.loaderText}>Caricamento in corso...</Text>
         </View>
       ) : (
         user && <Navigation />
@@ -57,14 +57,19 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
+  loaderContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    height: "100%",
+    backgroundColor: "#fff",
   },
-  logo: {
-    width: 400,
-    height: 400,
+  scaledIndicator: {
+    transform: [{ scale: 2 }], // Scala il loader per renderlo più grande
+  },
+  loaderText: {
+    marginTop: 16, // Spazio tra il testo e l'ActivityIndicator
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#ff6347",
   },
 });

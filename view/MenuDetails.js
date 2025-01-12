@@ -138,7 +138,7 @@ export default function MenuDetails({ route, navigation }) {
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#ff6347" />
+        <ActivityIndicator size="large" color="#ff6f00" />
       </View>
     );
   }

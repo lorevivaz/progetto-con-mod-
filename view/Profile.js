@@ -23,6 +23,7 @@ export default function ProfileScreen({ navigation }) {
   const [menuName, setMenuName] = useState("");
   const [menuDescription, setMenuDescription] = useState("");
   const [menuPrice, setMenuPrice] = useState("");
+  const [statusOrder, setStatusOrder] = useState("");
   const [orderData, setOrderData] = useState(null);
 
   useEffect(() => {
@@ -84,6 +85,7 @@ export default function ProfileScreen({ navigation }) {
               setMenuName(menuDetails.name);
               setMenuDescription(menuDetails.shortDescription);
               setMenuPrice(menuDetails.price);
+              setStatusOrder(orderStatus.status);
             } else {
               console.log("Nessun ultimo ordine trovato.");
             }
@@ -107,7 +109,7 @@ export default function ProfileScreen({ navigation }) {
   // funzione che permette di salvare i dati dell'utente
   const handleSave = async (updatedUser) => {
     try {
-      // chiamo la funzione updateUserData dal viewmodel per salvare i dati dell'utente aggiornati 
+      // chiamo la funzione updateUserData dal viewmodel per salvare i dati dell'utente aggiornati
       await updateUserData(sid, uid, updatedUser);
       setUser(updatedUser);
     } catch (error) {
@@ -169,6 +171,13 @@ export default function ProfileScreen({ navigation }) {
               <Ionicons name="document-text-outline" size={16} /> Descrizione
             </Text>
             <Text style={styles.value}>{menuDescription}</Text>
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>
+              <Ionicons name="location-outline" size={16} /> Stato dell'ordine
+            </Text>
+            <Text style={styles.value}>{statusOrder}</Text>
           </View>
 
           <View style={styles.fieldContainer}>
