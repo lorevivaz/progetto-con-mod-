@@ -200,6 +200,24 @@ class CommunicationController {
 
     return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
   }
+  
+static async DeleteOrder(sid) {
+    let endpoint = "order/";
+    let verb = "DELETE";
+    let queryParams = { sid: sid };
+    let bodyParams = {};
+
+    console.log(
+      "DeleteOrder chiamato con endpoint:",
+      endpoint,
+      " e queryParams: ",
+      queryParams
+    );
+
+    return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
+  }
+
+
 }
 
 export default CommunicationController;

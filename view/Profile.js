@@ -88,6 +88,7 @@ export default function ProfileScreen({ navigation }) {
               setStatusOrder(orderStatus.status);
             } else {
               console.log("Nessun ultimo ordine trovato.");
+              setOrderData(null);
             }
           } catch (error) {
             console.error(

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchOrder, fetchMenuDetails } from "../viewmodel/HomeViewModel";
+import { fetchOrder, fetchMenuDetails, fetchDelete } from "../viewmodel/HomeViewModel";
 import { useFocusEffect } from "@react-navigation/native";
 
 function Order({ navigation }) {
@@ -21,6 +21,37 @@ function Order({ navigation }) {
   const [sid, setSid] = useState(null);
   const [noOrder, setNoOrder] = useState(false);
 
+
+  const handleDeleteOrder = async () => {
+    try {
+      const user = await AsyncStorage.getItem("user");
+      const parsedUser = JSON.parse(user);
+      const sid = parsedUser.sid;
+  
+      const lastOrder = await AsyncStorage.getItem("lastOrder");
+      const oid = JSON.parse(lastOrder).oid;
+  
+      const order = await fetchOrder(oid, sid);
+  
+      const status = order.status;
+  
+      if (sid && oid && status !== "COMPLETED") {
+        const response = await fetchDelete(sid);
+        if (response) {
+          console.log("Ordine eliminato con successo:", response);
+          await AsyncStorage.removeItem("lastOrder"); // Rimuovi l'ordine dall'AsyncStorage
+          setNoOrder(true);
+          return response; 
+        } else {
+          throw new Error("La risposta della chiamata è vuota.");
+        }
+      }
+    } catch (error) {
+      console.error("Errore durante la fetchDelete:", error);
+      throw error; // Rilancia l'errore per gestirlo altrove
+    }
+  };
+  
   // Recupera il SID al montaggio del componente
   useEffect(() => {
     AsyncStorage.getItem("user").then((user) => {
@@ -189,6 +220,12 @@ function Order({ navigation }) {
                   ).toLocaleString()}
             </Text>
           </View>
+          <TouchableOpacity
+            onPress={() => handleDeleteOrder()}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>elimina ordine </Text>
+          </TouchableOpacity>
         </View>
       </View>
 

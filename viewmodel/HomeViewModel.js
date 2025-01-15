@@ -66,3 +66,24 @@ export async function fetchOrder(oid, sid) {
     throw error; // Rilancia l'errore per gestirlo altrove
   }
 }
+
+
+// funzione che mi elimina un ordine 
+export async function fetchDelete(sid){
+  try {
+    const response = await CommunicationController.DeleteOrder(sid);
+    if (response) {
+      console.log("Ordine eliminato con successo:", response);
+      return response; // Restituisce i dettagli dell'ordine
+    } else {
+      throw new Error("La risposta della chiamata è vuota.");
+    }
+  }
+  catch (error) {
+    console.error("Errore durante la fetchDelete:", error);
+    throw error; // Rilancia l'errore per gestirlo altrove
+  }
+
+}
+
+
