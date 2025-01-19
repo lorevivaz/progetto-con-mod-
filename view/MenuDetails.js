@@ -1,4 +1,3 @@
-//MenuDetails.js visualizza i dettagli di un menu selezionato dall'utente.
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -19,8 +18,8 @@ import * as SQLite from "expo-sqlite";
 import { handleBuy } from "../viewmodel/buyMenu";
 
 export default function MenuDetails({ route, navigation }) {
-  const { menu } = route.params; // qui prendiamo il menu passato come parametro dalla schermata precedente (Home.js)
-  const { location } = route.params; // qui prendiamo la location passata come parametro dalla schermata precedente (Home.js)
+  const { menu } = route.params;
+  const { location } = route.params;
 
   const [menuDetails, setMenuDetails] = useState(null);
   const [menuImage, setMenuImage] = useState(null);
@@ -98,7 +97,6 @@ export default function MenuDetails({ route, navigation }) {
         <Text style={styles.menuPrice}>Prezzo: {menuDetails.price}€</Text>
 
         <Text style={styles.menuDelivery}>
-          {" "}
           tempo di consegna: {menuDetails.deliveryTime} min
         </Text>
 
@@ -114,13 +112,22 @@ export default function MenuDetails({ route, navigation }) {
         {menuDetails.longDescription}
       </Text>
 
-      {/* Pulsante Acquista Ora che se cliccato fa la fetchbuy  e mi porta alla pagina order con la mappa */}
-      <TouchableOpacity
-        style={styles.buyButton}
-        onPress={() => handleBuy(menu, location, navigation)}
-      >
-        <Text style={styles.buyButtonText}>Acquista ora</Text>
-      </TouchableOpacity>
+      {/* Bottoni affiancati */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.buttonBase, styles.pageButton]}
+          onPress={() => navigation.navigate("page", { menu: menuDetails , sid: menu.sid})}
+        >
+          <Text style={styles.buttonText}>Vai alla pagina</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.buttonBase, styles.buyButton]}
+          onPress={() => handleBuy(menu, location, navigation)}
+        >
+          <Text style={styles.buttonText}>Acquista ora</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
@@ -128,7 +135,7 @@ export default function MenuDetails({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5", // colore di sfondo chiaro
+    backgroundColor: "#f5f5f5",
     padding: 16,
   },
   loaderContainer: {
@@ -177,10 +184,6 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 8,
   },
-  menuLocation: {
-    fontSize: 14,
-    color: "#777",
-  },
   menuShortDescription: {
     fontSize: 18,
     fontWeight: "500",
@@ -197,23 +200,37 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
   },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly", // Pulsanti distribuiti uniformemente
+    alignItems: "center",
+    marginTop: 40, // Spazio maggiore dalla parte superiore
+    paddingHorizontal: 16,
+  },
+  buttonBase: {
+    borderRadius: 50, // Curve molto arrotondate
+    paddingVertical: 18, // Altezza generosa
+    alignItems: "center",
+    justifyContent: "center",
+    width: "48%", // Pulsanti più larghi ma proporzionati
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 10,
+    elevation: 6,
+    marginHorizontal: 8,
+  },
   buyButton: {
     backgroundColor: "#ff6f00",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    alignItems: "center",
-    marginVertical: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 5,
-    elevation: 5,
-    transition: "background-color 0.3s",
   },
-  buyButtonText: {
-    fontSize: 18,
+  pageButton: {
+    backgroundColor: "#0066cc",
+  },
+  buttonText: {
+    fontSize: 18, // Testo leggibile e ben visibile
     color: "#fff",
     fontWeight: "bold",
+    letterSpacing: 1.0, // Migliora la leggibilità
+    textTransform: "uppercase", // Tutto maiuscolo per un aspetto moderno
   },
 });

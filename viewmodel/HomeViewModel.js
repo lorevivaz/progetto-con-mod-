@@ -84,6 +84,25 @@ export async function fetchDelete(sid){
     throw error; // Rilancia l'errore per gestirlo altrove
   }
 
+
+  
+
+}
+
+// funzione che mi recupera gli ingredienti di un menu
+export async function fetchIngredients(sid, mid) {
+  try {
+    const response = await CommunicationController.getIngredients(sid, mid);
+    if (response) {
+      console.log("Ingredienti recuperati con successo:", response);
+      return response; // Restituisce i dettagli dell'ordine
+    } else {
+      throw new Error("La risposta della chiamata è vuota.");
+    }
+  } catch (error) {
+    console.error("Errore durante la fetchIngredients:", error);
+    throw error; // Rilancia l'errore per gestirlo altrove
+  }
 }
 
 

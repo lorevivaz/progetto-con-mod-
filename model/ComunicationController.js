@@ -200,8 +200,8 @@ class CommunicationController {
 
     return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
   }
-  
-static async DeleteOrder(sid) {
+
+  static async DeleteOrder(sid) {
     let endpoint = "order/";
     let verb = "DELETE";
     let queryParams = { sid: sid };
@@ -217,7 +217,28 @@ static async DeleteOrder(sid) {
     return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
   }
 
+  static async getIngredients(sid, mid) {
+    let endpoint = "menu/" + mid + "/ingredients";
+    let verb = "GET";
+    let queryParams = { sid: sid };
+    let bodyParams = {};
 
+    console.log(
+      "getIngredients chiamato con endpoint:",
+      endpoint,
+      " e queryParams: ",
+      queryParams
+    );
+
+    try {
+      return await this.genericRequest(endpoint, verb, queryParams, bodyParams);
+    }
+    catch (error) {
+      console.error("Errore durante la fetchIngredients:", error);
+      throw error; // Rilancia l'errore per gestirlo altrove
+    }
+    
+  }
 }
 
 export default CommunicationController;

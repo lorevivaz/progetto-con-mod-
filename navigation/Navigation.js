@@ -10,7 +10,7 @@ import Home from "../view/Home";
 import Profile from "../view/Profile";
 import MenuDetails from "../view/MenuDetails";
 import ProfileForm from "../view/ProfileForm";
-import MenuMap from "../view/MenuMap";
+import page from "../view/page";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -28,6 +28,15 @@ function HomeStack() {
           headerBackTitle: "Indietro",
         }}
       />
+      <Stack.Screen
+        name="page"
+        component={page}
+        options={{
+          headerTitle: "pagina Menu",
+          headerBackTitle: "Indietro",
+        }}
+      />
+
     </Stack.Navigator>
   );
 }
@@ -107,8 +116,6 @@ export default function Navigation() {
               iconName = "fast-food-outline";
             } else if (route.name === "Profilo") {
               iconName = "person-outline";
-            }else if (route.name === "MenuMap") {
-              iconName = "map-outline";
             }
 
             return <Icon name={iconName} size={size} color={color} />;
@@ -137,11 +144,7 @@ export default function Navigation() {
           component={ProfileStackScreen}
           options={{ headerShown: false }}
         />
-        <Tab.Screen
-          name="MenuMap"
-          component={MenuMap}
-          options={{ headerShown: true }}
-        />
+       
 
       </Tab.Navigator>
     </NavigationContainer>
